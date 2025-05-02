@@ -11,6 +11,8 @@ const Dashboard = () => {
   const [quote, setQuote] = useState(null);
   const [countdown, setCountdown] = useState("");
   const [coverImages, setCoverImages] = useState({});
+  const [formattedQuote, setFormattedQuote] = useState(null);
+
 
   // countdown
   const getCurrentWeekKey = () => {
@@ -45,7 +47,22 @@ const Dashboard = () => {
       `${String(days).padStart(2, "0")}d•${String(hours).padStart(2, "0")}h•${String(minutes).padStart(2, "0")}m•${String(seconds).padStart(2, "0")}s`
     );
   };
+// format quote letter
+function italicizeRandomCharacters(text, percent = 0.2) {
+  const total = text.length;
+  const count = Math.floor(total * percent);
+  const indices = new Set();
+  while (indices.size < count) {
+    const rand = Math.floor(Math.random() * total);
+    if (/[a-zA-Z]/.test(text[rand])) {
+      indices.add(rand);
+    }
+  }
 
+  return [...text].map((char, idx) =>
+    indices.has(idx) ? <i key={idx}>{char}</i> : <span key={idx}>{char}</span>
+  );
+}
 
   // Lade Galerien und Uploads beim Start
   useEffect(() => {
@@ -62,6 +79,7 @@ const Dashboard = () => {
         if (Array.isArray(quoteJson) && quoteJson.length > 0) {
           const index = Math.abs(weekKey.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)) % quoteJson.length;
           setQuote(quoteJson[index]?.text);
+          setFormattedQuote(italicizeRandomCharacters(quoteJson[index]?.text || ""));
         }
 
         // cover images
@@ -106,7 +124,7 @@ const Dashboard = () => {
       {/* Zitat + Countdown */}
       <div className="quote">
         <div className="quote">
-          <div className="text-40">{quote || "Zitat wird geladen..."}</div>
+          <div className="text-40">{formattedQuote || "Zitat wird geladen..."}</div>
           <div className="countdown">{countdown}</div>
         </div>
       </div>

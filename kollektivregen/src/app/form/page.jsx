@@ -12,6 +12,7 @@ const Form = () => {
   const [imageError, setImageError] = useState(null);
   const [selectedQuoteId, setSelectedQuoteId] = useState(null);
   const router = useRouter();
+  const [nameFilled, setNameFilled] = useState(false);
 
   const isFormValid = checkboxChecked && imagePreview;
 
@@ -85,7 +86,8 @@ const Form = () => {
             type="text"
             id="name"
             placeholder="Name"
-            className="h-10 w-full"
+            className={`h-10 w-full transition-colors duration-300 ${nameFilled ? 'bg-black text-white' : 'bg-white text-black'}`}
+            onBlur={(e) => setNameFilled(e.target.value.trim() !== "")}
           />
         </div>
         <div className="input-container">
