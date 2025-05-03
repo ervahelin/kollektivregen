@@ -2,13 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import { ObjectId } from 'mongodb';
 import clientPromise from '../../../../lib/mongodb';
-import dynamic from 'next/dynamic';
-
-const Swiper = dynamic(() => import('swiper/react'), { ssr: false });
-const SwiperSlide = dynamic(() => import('swiper/react').then((mod) => mod.SwiperSlide), { ssr: false });
-
-import 'swiper/swiper-bundle.min.css'; 
-import { Navigation } from 'swiper';
 
 async function getGallery(galleryId) {
   const client = await clientPromise;

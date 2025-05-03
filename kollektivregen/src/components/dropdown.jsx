@@ -13,14 +13,24 @@ const Dropdown = ({ onSelect }) => {
       try {
         const res = await fetch("/api/quotes");
         const data = await res.json();
-        setQuotes([{ _id: null, text: "Ohne Spruch" }, ...data]);
+  
+        const startDate = new Date("2025-05-03"); // Start Datum fest eintragen
+        const today = new Date();
+  
+        const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+        const weeksSinceStart = Math.floor((today - startDate) / msPerWeek);
+  
+        const visibleQuotes = data.slice(0, weeksSinceStart + 1);
+  
+        setQuotes([{ _id: null, text: "Ohne Spruch" }, ...visibleQuotes]);
       } catch (err) {
         console.error("Fehler beim Laden der Zitate:", err);
       }
     };
-
+  
     fetchQuotes();
   }, []);
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
