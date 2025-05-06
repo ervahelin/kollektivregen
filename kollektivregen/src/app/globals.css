@@ -35,6 +35,7 @@
     font-style: normal;
     font-size: 14px;
     line-height: 20px;
+    color: var(--foreground);
   }
 
   /* Bildunterschrift/Kleingedrucktes */
@@ -54,7 +55,15 @@
   --foreground: #070707;
   --grey: #afafaf;
 }
-
+.black{
+  background-color: var(--foreground);
+}
+.grey{
+  background-color: var(--grey);
+}
+.white{
+  background-color: var(--background);
+}
 body {
   background: var(--background);
   color: var(--foreground);

@@ -1,95 +1,120 @@
-import React from 'react';
-import Link from 'next/link';
-import { ObjectId } from 'mongodb';
-import clientPromise from '../../../../lib/mongodb';
+"use client";
 
-async function getGallery(galleryId) {
-  const client = await clientPromise;
-  const db = client.db();
-  
-  const gallery = await db.collection('gallery').findOne({
-    _id: new ObjectId(galleryId),
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Image from "next/image";
+import BackButton from "../../../components/backbutton";
+import Link from "next/link";
+import { useSwipeable } from "react-swipeable";
+
+export default function GalleryDetailPage() {
+  const { galleryid } = useParams();
+  const [gallery, setGallery] = useState(null);
+  const [quote, setQuote] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    async function fetchGallery() {
+      try {
+        const res = await fetch(`/api/gallery/${galleryid}`);
+        const data = await res.json();
+        setGallery(data);
+
+        // Hole das Quote passend zur gallery
+        if (data.quoteid) {
+          const quoteRes = await fetch(`/api/quotes/${data.quoteid}`);
+          const quoteData = await quoteRes.json();
+          setQuote(quoteData?.text_formatted || null);
+        }
+      } catch (err) {
+        console.error("Fehler beim Laden:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchGallery();
+  }, [galleryid]);
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => setCurrentIndex((currentIndex + 1) % uploads.length),
+    onSwipedRight: () =>
+      setCurrentIndex((currentIndex - 1 + uploads.length) % uploads.length),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true,
   });
 
-  if (!gallery) return null;
+  if (loading) return <div className="p-4 text-center">Lade...</div>;
+  if (!gallery)
+    return <div className="p-4 text-center">Keine Galerie gefunden.</div>;
 
-  const quote = await db.collection('quotes').findOne({
-    _id: new ObjectId(gallery.quoteid),
-  });
-
-  const uploads = await db
-    .collection('form_uploads')
-    .find({
-      _id: { $in: gallery.uploads.map((id) => new ObjectId(id)) },
-    })
-    .toArray();
-
-  return {
-    ...gallery,
-    quoteText: quote ? quote.text : 'Kein Spruch gefunden', 
-    uploads: uploads,
-  };
-}
-
-export async function generateStaticParams() {
-  const client = await clientPromise;
-  const db = client.db();
-  const galleries = await db.collection('gallery').find().toArray();
-
-  return galleries.map((gallery) => ({
-    galleryId: gallery._id.toString(),
-  }));
-}
-
-const ImageGalleryPage = async ({ params }) => {
-  const { galleryId } = params;
-  const gallery = await getGallery(galleryId);
-
-  if (!gallery) {
-    return <div>Galerie nicht gefunden</div>;
-  }
+  const uploads = gallery.uploads || [];
 
   return (
-    <div className="gallery-page-container">
-      <div className="mt-75 quote-gallery-text">
-        {gallery.quoteText}
-      </div>
+    <div className="max-w-4xl mx-auto flex flex-col justify-center h-screen -mt-16">
+      {/* Zitat */}
+      {quote && <div className="mb-6 text-xl italic pb-4">{quote}</div>}
 
-      <div className="flex flex-col items-center w-full">
-        <Swiper
-          modules={[Navigation]}
-          navigation
-          spaceBetween={30}
-          slidesPerView={1}
-          className="w-full max-w-3xl"
-          pagination={{ clickable: true }}
-        >
-          {gallery.uploads.map((upload) => (
-            <SwiperSlide key={upload.uploadId.toString()}>
-              <div className="flex flex-col items-center">
-                <img
-                  src={upload.url}
-                  alt={upload.name}
-                  className="w-80 h-80 object-cover rounded-lg"
-                />
-                <div className="mt-2 text-center text-lg">{upload.name}</div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
-
-      {/* Navigation */}
-      <div className="navigation">
-        <div className="flex flex-row justify-between">
-          <Link href="/">kollektiv regen</Link>
+      {/* Bild-Slider */}
+      {uploads.length > 0 && (
+        <div className="relative w-full flex flex-col gap-2">
+          <div className="flex justify-between items-center">
+            <button
+              onClick={() =>
+                setCurrentIndex(
+                  (currentIndex - 1 + uploads.length) % uploads.length
+                )
+              }
+              className="hidden md:block px-2 py-1">
+              ‹
+            </button>
+            <div
+              {...handlers}
+              className="aspect-[4/5] w-full max-w-md mx-auto relative overflow-hidden">
+              <Image
+                src={uploads[currentIndex].url}
+                alt={uploads[currentIndex].name || "Bild"}
+                fill
+                className="object-cover"
+              />
+            </div>
+            <button
+              onClick={() =>
+                setCurrentIndex((currentIndex + 1) % uploads.length)
+              }
+              className="hidden md:block px-2 py-1">
+              ›
+            </button>
+          </div>
+          <div className="text-center">
+            {uploads[currentIndex].name && (
+              <p className="body-text">
+                {uploads[currentIndex].name} | {uploads[currentIndex].date}
+              </p>
+            )}
+          </div>
+          {/* Dots */}
+          <div className="flex justify-center space-x-2">
+            {uploads.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index === currentIndex ? "black" : "grey"
+                }`}
+                aria-label={`Bild ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
-        <Link href="/form" className="text-xl">
-          +
+      )}
+      <div className="flex flex-row p-4 fixed bottom-4 w-full gap-2">
+        <BackButton />
+        <Link href="/">
+          <Image src="/logo.svg" width={40} height={40} alt="logo" />
         </Link>
       </div>
     </div>
   );
-};
-
-export default ImageGalleryPage;
+}
