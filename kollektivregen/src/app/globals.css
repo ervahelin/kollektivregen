@@ -8,13 +8,14 @@
   .padding-21 {
     @apply px-[21px]  lg:px-[10vw];
   }
-  /* Hauptspruch/Mainpage */
+  /* Hauptspruch/Mainpage 
   .text-40 {
     font-family: "Real Text Pro", sans-serif;
     font-weight: 300;
     font-size: 40px;
     line-height: 46px;
   }
+    */
 
   /* Spruch/Galerie */
   .quote-gallery-text {
@@ -68,8 +69,8 @@ body {
 
 .countdown {
   font-family: "Real Text Pro", sans-serif;
-  color: var(--grey);
-  font-size: 14px;
+  color: var(--foreground);
+  @apply text-sm lg:text-lg;
 }
 
 .cover {
@@ -84,12 +85,12 @@ body {
 }
 
 .quote {
-  @apply flex flex-col gap-2 justify-center text-right pr-5 z-30 fixed top-1/2 transform -translate-y-1/2 w-full h-[300px];
+  @apply flex flex-col gap-2 justify-center lg:items-center pr-5 z-30 fixed top-1/2 transform -translate-y-1/2 w-full h-[300px];
   background: var(--background);
 }
 
 .navigation {
-  @apply flex flex-row justify-between font-semibold inset-x-0 bottom-0 px-5 h-16 items-center fixed;
+  @apply flex flex-row justify-between font-semibold inset-x-0 bottom-0 px-5 h-16 lg:h-[120px] lg:px-[5vw] items-center fixed;
   background: var(--background);
   z-index: 110;
 }

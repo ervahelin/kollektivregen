@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import BackButton from "../../../components/backbutton";
 import Link from "next/link";
+import BackButton from "../../../components/backbutton";
 import { useSwipeable } from "react-swipeable";
 
 export default function GalleryDetailPage() {
@@ -15,32 +15,40 @@ export default function GalleryDetailPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    async function fetchGallery() {
+    const fetchData = async () => {
       try {
         const res = await fetch(`/api/gallery/${galleryid}`);
         const data = await res.json();
         setGallery(data);
 
-        // Hole das Quote passend zur gallery
-        if (data.quoteid) {
+        if (data?.quoteid) {
           const quoteRes = await fetch(`/api/quotes/${data.quoteid}`);
           const quoteData = await quoteRes.json();
           setQuote(quoteData?.text_formatted || null);
         }
       } catch (err) {
-        console.error("Fehler beim Laden:", err);
+        console.error("Error loading data:", err);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
-    fetchGallery();
+    fetchData();
   }, [galleryid]);
 
-  const handlers = useSwipeable({
-    onSwipedLeft: () => setCurrentIndex((currentIndex + 1) % uploads.length),
-    onSwipedRight: () =>
-      setCurrentIndex((currentIndex - 1 + uploads.length) % uploads.length),
+  const uploads = gallery?.uploads || [];
+
+  const nextImage = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % uploads.length);
+  }, [uploads]);
+
+  const prevImage = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + uploads.length) % uploads.length);
+  }, [uploads]);
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: nextImage,
+    onSwipedRight: prevImage,
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
@@ -49,91 +57,83 @@ export default function GalleryDetailPage() {
   if (!gallery)
     return <div className="p-4 text-center">Keine Galerie gefunden.</div>;
 
-  const uploads = gallery.uploads || [];
-
   return (
     <div className="mx-auto">
       <div className="padding-21 pt-[10vh] h-screen flex flex-col lg:grid lg:grid-cols-3 lg:w-full justify-center">
-        {/* Zitat */}
-        {
-          <div className="mb-6 text-xl lg:text-[34px] italic pb-4 lg:order-1">
-            {quote} abc
-          </div>
-        }
+        {/* Quote Section */}
+        <div className="mb-6 text-xl lg:text-[34px] italic pb-4 lg:order-1">
+          {quote}
+        </div>
 
-        {/* Bild-Slider */}
+        {/* Image Slider */}
         {uploads.length > 0 && (
           <div className="relative w-full flex flex-col gap-2 lg:gap-4 lg:order-2">
             <div className="flex justify-between items-center lg:gap-[60px] lg:h10/12">
-              <button
-                onClick={() =>
-                  setCurrentIndex(
-                    (currentIndex - 1 + uploads.length) % uploads.length
-                  )
-                }
-                className="hidden md:block px-2 py-1 cursor-pointer">
+              <button onClick={prevImage} className="hidden md:block px-2 py-1">
                 <Image
                   src="/arrow.svg"
                   width={60}
                   height={60}
-                  alt="back"
+                  alt="Zurück"
                   className="scale-x-[-1]"
                 />
               </button>
+
               <div
-                {...handlers}
+                {...swipeHandlers}
                 className="aspect-[4/5] w-full max-w-md mx-auto relative overflow-hidden">
                 <Image
-                  src={uploads[currentIndex].url}
-                  alt={uploads[currentIndex].name || "Bild"}
+                  src={uploads[currentIndex]?.url}
+                  alt={uploads[currentIndex]?.name || "Bild"}
                   fill
                   className="object-cover"
                 />
               </div>
-              <button
-                onClick={() =>
-                  setCurrentIndex((currentIndex + 1) % uploads.length)
-                }
-                className="hidden md:block px-2 py-1 cursor-pointer">
-                <Image src="/arrow.svg" width={60} height={60} alt="next" />
+
+              <button onClick={nextImage} className="hidden md:block px-2 py-1">
+                <Image src="/arrow.svg" width={60} height={60} alt="Weiter" />
               </button>
             </div>
-            <div className="text-center">
-              {uploads[currentIndex].name && (
+
+            {/* Image Info */}
+            {uploads[currentIndex]?.name && (
+              <div className="text-center">
                 <p className="body-text">
                   {uploads[currentIndex].name} | {uploads[currentIndex].date}
                 </p>
-              )}
-            </div>
+              </div>
+            )}
+
             {/* Dots */}
             <div className="flex justify-center space-x-2">
               {uploads.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    index === currentIndex ? "black" : "grey"
-                  }`}
                   aria-label={`Bild ${index + 1}`}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    index === currentIndex ? "bg-black" : "bg-gray-400"
+                  }`}
                 />
               ))}
             </div>
           </div>
         )}
 
-        {/* empty */}
-        <div className="hidden lg:block lg:order-3"> </div>
+        <div className="hidden lg:block lg:order-3"></div>
       </div>
-      <div className="flex flex-row justify-between w-12/12 padding-21 fixed bottom-4 h-20 items-center">
-        <div className="flex flex-row gap-2">
+
+      {/* Footer Navigation */}
+      <div className="flex flex-row lg:h-[120px] lg:px-[5vw] justify-between w-full padding-21 fixed bottom-4 h-20 items-center">
+        <div className="flex flex-row gap-2 lg:gap-14">
           <BackButton />
           <Link href="/dashboard">
             <Image
               src="/logo.svg"
               width={60}
               height={40}
-              alt="logo"
-              className="hover:scale-110 active:scale-110 transition"
+              alt="Logo"
+              className="hover:scale-110 active:scale-110 transition lg:w-[105px] lg:h-[50px]"
             />
           </Link>
         </div>
@@ -141,7 +141,7 @@ export default function GalleryDetailPage() {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 56.69 56.69"
-            className="w-6 fill-black stroke-transparent hover:stroke-black stroke-[2] transition-colors">
+            className="w-6 h-6 lg:w-[35px] lg:h-[35px] fill-black stroke-transparent hover:stroke-black stroke-[2] transition-colors">
             <polygon points="56.69 25.03 31.67 25.03 31.67 0 25.03 0 25.03 25.03 0 25.03 0 31.67 25.03 31.67 25.03 56.69 31.67 56.69 31.67 31.67 56.69 31.67 56.69 25.03" />
           </svg>
         </Link>
