@@ -5,7 +5,7 @@ const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 const dbName = "kollektivregen";
 
-export async function GET(req, { params }) {
+export async function GET(request, { params }) {
   const { id } = params;
 
   try {
@@ -16,7 +16,10 @@ export async function GET(req, { params }) {
     const gallery = await collection.findOne({ _id: new ObjectId(id) });
 
     if (!gallery) {
-      return NextResponse.json({ error: "Galerie nicht gefunden" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Galerie nicht gefunden" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(gallery);

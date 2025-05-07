@@ -1,14 +1,12 @@
 @import "tailwindcss";
 
-
 @layer utilities {
-  *{
+  * {
     box-sizing: border-box;
     scroll-behavior: smooth;
   }
   .padding-21 {
-    padding-left: 21px;
-    padding-right: 21px;
+    @apply px-[21px]  lg:px-[10vw];
   }
   /* Hauptspruch/Mainpage */
   .text-40 {
@@ -47,20 +45,20 @@
 
 :root {
   --background: #f0f0f0;
-  --foreground: #1C1B1B;
+  --foreground: #1c1b1b;
   --grey: #afafaf;
 }
 
-body{
+body {
   color: var(--foreground);
 }
-.black{
+.black {
   background-color: var(--foreground);
 }
-.grey{
+.grey {
   background-color: var(--grey);
 }
-.white{
+.white {
   background-color: var(--background);
 }
 body {
@@ -109,7 +107,7 @@ select,
 .input-container {
   @apply flex flex-col gap-2 items-center;
 }
-::placeholder{
+::placeholder {
   @apply text-[#1C1B1B] italic;
 }
 #bild,
@@ -137,7 +135,7 @@ li {
   font-family: "Real Text Pro", sans-serif;
   font-weight: 400;
   font-size: 14px;
-  background-color: var(--background)
+  background-color: var(--background);
 }
 .dropdown-button {
   @apply border-black border-2 rounded-none p-4 w-full text-left lg:h-[60px];
@@ -170,8 +168,8 @@ nextjs-portal {
   @apply absolute inset-0 m-auto w-3 h-3 bg-white rounded-full block;
 }
 .cover-container {
-  width: 87px; 
-  height: 109px; 
-  overflow: hidden; 
+  width: 87px;
+  height: 109px;
+  overflow: hidden;
   object-fit: cover;
 }
