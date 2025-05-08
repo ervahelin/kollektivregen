@@ -1,52 +1,64 @@
-import { NextResponse } from 'next/server';
-import { MongoClient, ObjectId } from 'mongodb';
+import { NextResponse } from "next/server";
+import { MongoClient, ObjectId } from "mongodb";
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 const dbName = "kollektivregen";
 
-export async function POST(request) {
-  const body = await request.json();
-
+export async function POST(req) {
   try {
     await client.connect();
     const db = client.db(dbName);
 
-    // 1. Upload in form_uploads speichern
     const uploadsCollection = db.collection("form_uploads");
-    const uploadResult = await uploadsCollection.insertOne(body);
+    const galleryCollection = db.collection("gallery");
 
-    const uploadId = uploadResult.insertedId;
-    const { quoteid, name, url } = body;
+    const body = await req.json();
+    const { name, url, quoteid, checkbox } = body;
 
-    const galleriesCollection = db.collection("gallery");
+    const parsedQuoteId = quoteid && quoteid !== "null" ? new ObjectId(quoteid) : null;
 
-    // 2. Galerie mit gleichem quoteid suchen
-    const existingGallery = await galleriesCollection.findOne({ quoteid: new ObjectId(quoteid) });
-
-    const newUpload = {
-      uploadId,
+    // Step 1: Upload speichern
+    const uploadDoc = {
       name,
       url,
+      checkbox,
+      quoteid: parsedQuoteId,
+      createdAt: new Date()
     };
 
+    const result = await uploadsCollection.insertOne(uploadDoc);
+
+    // Step 2: Upload-Eintrag vorbereiten
+    const uploadEntry = {
+      uploadId: result.insertedId,
+      name,
+      url
+    };
+
+    // Step 3: Galerie suchen oder erstellen, auch wenn quoteid null ist
+    const existingGallery = await galleryCollection.findOne({ 
+      quoteid: parsedQuoteId !== null ? parsedQuoteId : { $eq: null } 
+    });
+
     if (existingGallery) {
-      // 3a. Falls vorhanden, Upload zur bestehenden Galerie hinzufügen
-      await galleriesCollection.updateOne(
+      // Galerie mit passender `quoteid` gefunden, füge den Upload hinzu
+      await galleryCollection.updateOne(
         { _id: existingGallery._id },
-        { $push: { uploads: newUpload } }
+        { $push: { uploads: uploadEntry } }
       );
     } else {
-      // 3b. Falls nicht vorhanden, neue Galerie anlegen
-      await galleriesCollection.insertOne({
-        quoteid: new ObjectId(quoteid),
-        uploads: [newUpload],
-      });
+      // Keine Galerie gefunden, erstelle eine neue Galerie
+      const newGallery = {
+        quoteid: parsedQuoteId, // das kann auch null sein!
+        uploads: [uploadEntry]
+      };
+      await galleryCollection.insertOne(newGallery);
     }
 
-    return NextResponse.json({ success: true, id: uploadId });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error(error);
+    console.error("Fehler beim Upload:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   } finally {
     await client.close();
