@@ -6,7 +6,7 @@
     scroll-behavior: smooth;
   }
   .padding-21 {
-    @apply px-[21px]  lg:px-[10vw];
+    @apply px-[21px]  lg:px-[7vw];
   }
   /* Hauptspruch/Mainpage 
   .text-40 {
@@ -90,7 +90,7 @@ body {
 }
 
 .navigation {
-  @apply flex flex-row justify-between font-semibold inset-x-0 bottom-0 px-5 h-16 lg:h-[120px] lg:px-[5vw] items-center fixed;
+  @apply flex flex-row justify-between font-semibold inset-x-0 bottom-0 px-5 h-16 lg:h-[120px] lg:px-[7vw] items-center fixed;
   background: var(--background);
   z-index: 110;
 }
@@ -103,7 +103,15 @@ body {
 input,
 select,
 #bild {
-  @apply border-[#1C1B1B] border-2 rounded-none px-5;
+  @apply border-[#1C1B1B] border-2 transition-all rounded-none px-5;
+}
+
+input:hover,
+select:hover,
+#bild:hover {
+  @apply border-4 font-semibold;
+  transition: border-width 0.3s ease, border-color 0.3s ease,
+    font-weight 0.3s ease;
 }
 .input-container {
   @apply flex flex-col gap-2 items-center;
@@ -139,7 +147,12 @@ li {
   background-color: var(--background);
 }
 .dropdown-button {
-  @apply border-black border-2 rounded-none p-4 w-full text-left lg:h-[60px];
+  @apply border-[#1C1B1B] border-2 rounded-none p-4 w-full text-left lg:h-[60px] cursor-pointer;
+}
+.dropdown-button:hover {
+  @apply border-4 font-semibold;
+  transition: border-width 0.3s ease, border-color 0.3s ease,
+    font-weight 0.3s ease;
 }
 
 /*hide next toast*/
