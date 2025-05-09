@@ -1,3 +1,4 @@
+// form/page.js
 "use client";
 import React, { useState, useCallback } from "react";
 import Link from "next/link";
@@ -11,12 +12,12 @@ const Form = () => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageError, setImageError] = useState(null);
-  const [selectedQuoteId, setSelectedQuoteId] = useState(null);
+  const [selectedQuoteId, setSelectedQuoteId] = useState(null);  // Zustand für das ausgewählte Zitat
   const [nameFilled, setNameFilled] = useState(false);
   const [loading, setLoading] = useState(false); // State für den Ladeindikator
   const router = useRouter();
 
-  const isFormValid = checkboxChecked && imagePreview;
+  const isFormValid = checkboxChecked && imagePreview && selectedQuoteId !== null;  // Sicherstellen, dass ein Quote ausgewählt wurde
 
   const handleImageUpload = useCallback(async (e) => {
     const file = e.target.files[0];
@@ -62,7 +63,7 @@ const Form = () => {
       const name = e.target.name.value;
 
       const payload = {
-        quoteid: selectedQuoteId,
+        quoteid: selectedQuoteId,  // Die gewählte quoteid
         name: name || null,
         url: "https://example.com/test.jpg",
         checkbox: checkboxChecked,
@@ -149,7 +150,7 @@ const Form = () => {
           <div className="flex flex-col gap-5">
             <div className="input-container">
               <label htmlFor="spruch">Spruch (optional)</label>
-              <CustomSelect onSelect={(id) => setSelectedQuoteId(id)} />
+              <CustomSelect onSelect={setSelectedQuoteId} /> {/* übergebe den ausgewählten quoteid */}
             </div>
             <div className="input-container">
               <label htmlFor="name">Vorname (optional)</label>

@@ -1,66 +1,66 @@
-import { NextResponse } from "next/server";
-import { MongoClient, ObjectId } from "mongodb";
+import { PrismaClient } from '@prisma/client';
 
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
-const dbName = "kollektivregen";
+const prisma = new PrismaClient();
 
 export async function POST(req) {
   try {
-    await client.connect();
-    const db = client.db(dbName);
-
-    const uploadsCollection = db.collection("form_uploads");
-    const galleryCollection = db.collection("gallery");
-
     const body = await req.json();
-    const { name, url, quoteid, checkbox } = body;
+    console.log('Received body:', body);  // Log the body to inspect quoteid
 
-    const parsedQuoteId = quoteid && quoteid !== "null" ? new ObjectId(quoteid) : null;
+    const { quoteid, name, url, checkbox } = body;
 
-    // Step 1: Upload speichern
-    const uploadDoc = {
-      name,
-      url,
-      checkbox,
-      quoteid: parsedQuoteId,
-      createdAt: new Date()
-    };
-
-    const result = await uploadsCollection.insertOne(uploadDoc);
-
-    // Step 2: Upload-Eintrag vorbereiten
-    const uploadEntry = {
-      uploadId: result.insertedId,
-      name,
-      url
-    };
-
-    // Step 3: Galerie suchen oder erstellen, auch wenn quoteid null ist
-    const existingGallery = await galleryCollection.findOne({ 
-      quoteid: parsedQuoteId !== null ? parsedQuoteId : { $eq: null } 
-    });
-
-    if (existingGallery) {
-      // Galerie mit passender `quoteid` gefunden, füge den Upload hinzu
-      await galleryCollection.updateOne(
-        { _id: existingGallery._id },
-        { $push: { uploads: uploadEntry } }
+    if (!quoteid) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'quoteid is required' }),
+        { status: 400 }
       );
-    } else {
-      // Keine Galerie gefunden, erstelle eine neue Galerie
-      const newGallery = {
-        quoteid: parsedQuoteId, // das kann auch null sein!
-        uploads: [uploadEntry]
-      };
-      await galleryCollection.insertOne(newGallery);
     }
 
-    return NextResponse.json({ success: true });
+    // 1. Eintrag in FormUpload erstellen
+    const formUpload = await prisma.formUpload.create({
+      data: {
+        quoteId: quoteid,
+        name: name || '',
+        url,
+        checkbox
+      },
+    });
+
+    // 2. Nach existierender Gallery mit dieser quoteId suchen
+    let gallery = await prisma.gallery.findFirst({
+      where: {
+        quoteId: quoteid,
+      },
+    });
+
+    // 3. Falls keine Gallery existiert, erstelle eine neue
+    if (!gallery) {
+      gallery = await prisma.gallery.create({
+        data: {
+          quoteId: quoteid,
+        },
+      });
+    }
+
+    // 4. UploadEntry in die Gallery einfügen
+    await prisma.uploadEntry.create({
+      data: {
+        galleryId: gallery.id,
+        uploadId: formUpload.id,
+        name: formUpload.name,
+        url: formUpload.url,
+      },
+    });
+
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+    });
   } catch (error) {
     console.error("Fehler beim Upload:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  } finally {
-    await client.close();
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      { status: 500 }
+    );
   }
 }
+

@@ -112,7 +112,7 @@ const Dashboard = () => {
       try {
         const res = await fetch("/api/gallery");
         const json = await res.json();
-        setGalleries(json.data);
+        setGalleries(json);
 
         const quoteRes = await fetch("/api/quotes");
         const quoteJson = await quoteRes.json();
@@ -132,7 +132,7 @@ const Dashboard = () => {
         }
 
         const covers = {};
-        json.data.forEach((gallery) => {
+        json.forEach((gallery) => {
           const validUploads = gallery.uploads?.filter((u) => u.url);
           if (validUploads && validUploads.length > 0) {
             const randomUpload =
@@ -197,7 +197,7 @@ const Dashboard = () => {
                 style={{ top: `${pos.top}px`, left: `${pos.left}px` }}>
                 <div className="cover-container">
                   <Image
-                    src={image.url.trim()}
+                    src={image.url.trim() || "https://via.placeholder.com/150"}
                     alt={image.name || "Gallery Image"}
                     width={87}
                     height={109}

@@ -1,0 +1,44 @@
+generator client {
+  provider   = "prisma-client-js"
+  output     = "./node_modules/@prisma/client"
+  engineType = "wasm"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Quote {
+  id             String       @id @default(uuid())
+  text           String
+  text_formatted String
+  formUploads    FormUpload[]
+  galleries      Gallery[]
+}
+
+model FormUpload {
+  id        String   @id @default(uuid())
+  name      String
+  url       String
+  checkbox  Boolean
+  createdAt DateTime @default(now())
+  quoteId   String
+  quote     Quote    @relation(fields: [quoteId], references: [id])
+}
+
+model Gallery {
+  id      String        @id @default(uuid())
+  quoteId String
+  quote   Quote         @relation(fields: [quoteId], references: [id])
+  uploads UploadEntry[] @relation("GalleryUploads")
+}
+
+model UploadEntry {
+  id        String  @id @default(uuid())
+  uploadId  String
+  name      String
+  url       String
+  galleryId String
+  gallery   Gallery @relation("GalleryUploads", fields: [galleryId], references: [id])
+}
