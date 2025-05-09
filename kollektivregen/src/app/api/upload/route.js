@@ -14,10 +14,12 @@ export async function POST(req) {
     const galleryCollection = db.collection("gallery");
 
     const body = await req.json();
+
+    
     const { name, url, quoteid, checkbox } = body;
 
-    const parsedQuoteId = quoteid && quoteid !== "null" ? new ObjectId(quoteid) : null;
-
+    const parsedQuoteId = ObjectId.createFromHexString(quoteid)
+    
     // Step 1: Upload speichern
     const uploadDoc = {
       name,
@@ -37,8 +39,12 @@ export async function POST(req) {
     };
 
     // Step 3: Galerie suchen oder erstellen, auch wenn quoteid null ist
+    const obj = await galleryCollection.find()
+    console.warn(obj)
+    console.warn(parsedQuoteId)
+    
     const existingGallery = await galleryCollection.findOne({ 
-      quoteid: parsedQuoteId !== null ? parsedQuoteId : { $eq: null } 
+      quoteid: quoteid ?? null
     });
 
     if (existingGallery) {
