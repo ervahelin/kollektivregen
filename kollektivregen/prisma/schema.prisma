@@ -19,12 +19,12 @@ model Quote {
 
 model FormUpload {
   id        String   @id @default(uuid())
-  name      String
+  name      String?
   url       String
   checkbox  Boolean
   createdAt DateTime @default(now())
-  quoteId   String
-  quote     Quote    @relation(fields: [quoteId], references: [id])
+  quoteId   String?
+  quote     Quote?    @relation(fields: [quoteId], references: [id])
 }
 
 model Gallery {

@@ -15,7 +15,6 @@ const generatePositions = (
 ) => {
   const positions = [];
 
-  // Platzierung Bild 1 (links oben) & Bild 2 (rechts oben)
   if (count > 0) {
     positions.push({ top: 0, left: 0 });
   }
@@ -24,12 +23,12 @@ const generatePositions = (
   }
 
   let placed = 2;
-  let row = 1; // beginne mit Zeile **nach** der ersten vollen Bildhöhe
+  let row = 1;
 
   while (placed < count) {
     for (let col = 0; col < maxCols && placed < count; col++) {
       const offsetY = col % 2 === 0 ? 0 : stepY;
-      const top = imageHeight + (row - 1) * stepY + offsetY; // beachte: Startversatz durch Bildhöhe
+      const top = imageHeight + (row - 1) * stepY + offsetY;
       const left = col * imageWidth;
       positions.push({ top, left });
       placed++;
@@ -46,11 +45,8 @@ const Dashboard = () => {
   const [quote, setQuote] = useState(null);
   const [countdown, setCountdown] = useState("");
   const [coverImages, setCoverImages] = useState({});
-  const [formattedQuote, setFormattedQuote] = useState(null);
 
-  const positions = useMemo(() => {
-    return generatePositions(galleries.length);
-  }, [galleries]);
+  const positions = useMemo(() => generatePositions(galleries.length), [galleries]);
 
   const getCurrentWeekKey = () => {
     const now = new Date();
@@ -91,71 +87,56 @@ const Dashboard = () => {
     );
   };
 
-  function italicizeRandomCharacters(text, percent = 0.2) {
-    const total = text.length;
-    const count = Math.floor(total * percent);
-    const indices = new Set();
-    while (indices.size < count) {
-      const rand = Math.floor(Math.random() * total);
-      if (/[a-zA-Z]/.test(text[rand])) {
-        indices.add(rand);
-      }
-    }
-
-    return [...text].map((char, idx) =>
-      indices.has(idx) ? <i key={idx}>{char}</i> : <span key={idx}>{char}</span>
-    );
-  }
-
   useEffect(() => {
-    async function fetchData() {
+    async function fetchQuote() {
       try {
-        const res = await fetch("/api/gallery");
-        const json = await res.json();
-        setGalleries(json);
-
-        const quoteRes = await fetch("/api/quotes");
-        const quoteJson = await quoteRes.json();
-
-        const weekKey = getCurrentWeekKey();
-        if (Array.isArray(quoteJson) && quoteJson.length > 0) {
-          const index =
-            Math.abs(
-              weekKey
-                .split("")
-                .reduce((acc, char) => acc + char.charCodeAt(0), 0)
-            ) % quoteJson.length;
-          setQuote(quoteJson[index]?.text);
-          setFormattedQuote(
-            italicizeRandomCharacters(quoteJson[index]?.text || "")
-          );
+        const res = await fetch("/api/quotes/single");
+        const data = await res.json();
+        if (data.error) {
+          console.error(data.error);
+        } else {
+          setQuote(data);
         }
-
-        const covers = {};
-        json.forEach((gallery) => {
-          const validUploads = gallery.uploads?.filter((u) => u.url);
-          if (validUploads && validUploads.length > 0) {
-            const randomUpload =
-              validUploads[Math.floor(Math.random() * validUploads.length)];
-            covers[gallery._id] = randomUpload;
-          }
-        });
-        setCoverImages(covers);
-      } catch (err) {
-        console.error("Error fetching galleries:", err);
+      } catch (error) {
+        console.error("Error fetching quote:", error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchData();
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
+    fetchQuote();
+  }, []);
+
+  useEffect(() => {
+    async function fetchGalleries() {
+      try {
+        const res = await fetch("/api/galleries");
+        const data = await res.json();
+        setGalleries(data);
+        const coverImages = {};
+        data.forEach((gallery) => {
+          coverImages[gallery.id] = gallery.coverImage || "https://via.placeholder.com/150";
+        });
+        setCoverImages(coverImages);
+      } catch (error) {
+        console.error("Error fetching galleries:", error);
+      }
+    }
+
+    fetchGalleries();
+  }, []);
+
+  // Countdown Aktualisierung
+  useEffect(() => {
+    updateCountdown(); // Sofortige Aktualisierung bei Initialisierung
+    const intervalId = setInterval(updateCountdown, 1000); // Alle 1 Sekunde aktualisieren
+
+    // Aufräumen des Intervalls
+    return () => clearInterval(intervalId);
   }, []);
 
   if (loading) {
-    return <div>Laden...</div>;
+    return <div>Loading...</div>;
   }
 
   return (
@@ -175,7 +156,7 @@ const Dashboard = () => {
       {/* Zitat + Countdown */}
       <div className="quote">
         <div className="text-[40px] lg:text-[90px]">
-          {formattedQuote || "Zitat wird geladen..."}
+          {quote?.text_formatted || "Zitat wird geladen..."}
         </div>
         <div className="countdown">{countdown}</div>
       </div>
@@ -184,21 +165,21 @@ const Dashboard = () => {
       <div className="cover-grid padding-21">
         <div className="relative w-full min-h-[800px]">
           {galleries.map((gallery, index) => {
-            const image = coverImages[gallery._id];
+            const image = coverImages[gallery.id];
             if (!image) return null;
 
             const pos = positions[index];
 
             return (
               <Link
-                key={gallery._id}
-                href={`/imagegallery/${gallery._id}`}
+                key={gallery.id}
+                href={`/imagegallery/${gallery.id}`}
                 className="absolute z-40"
                 style={{ top: `${pos.top}px`, left: `${pos.left}px` }}>
                 <div className="cover-container">
                   <Image
-                    src={image.url.trim() || "https://via.placeholder.com/150"}
-                    alt={image.name || "Gallery Image"}
+                    src={image.trim() || "https://via.placeholder.com/150"}
+                    alt={gallery.name || "Gallery Image"}
                     width={87}
                     height={109}
                     className="object-cover"
