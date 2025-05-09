@@ -110,7 +110,7 @@ const Dashboard = () => {
   useEffect(() => {
     async function fetchGalleries() {
       try {
-        const res = await fetch("/api/galleries");
+        const res = await fetch("/api/gallery");
         const data = await res.json();
         setGalleries(data);
         const coverImages = {};
@@ -163,33 +163,38 @@ const Dashboard = () => {
 
       {/* Galerie Bilder */}
       <div className="cover-grid padding-21">
-        <div className="relative w-full min-h-[800px]">
-          {galleries.map((gallery, index) => {
-            const image = coverImages[gallery.id];
-            if (!image) return null;
+  <div className="relative w-full min-h-[800px]">
+    {galleries.map((gallery, index) => {
+      // Auswahl eines zufälligen Bildes aus der Galerie
+      const randomImage = gallery.uploads ? gallery.uploads[Math.floor(Math.random() * gallery.uploads.length)] : null;
+      const image = randomImage ? randomImage.url : coverImages[gallery.id];
 
-            const pos = positions[index];
+      if (!image) return null;
 
-            return (
-              <Link
-                key={gallery.id}
-                href={`/imagegallery/${gallery.id}`}
-                className="absolute z-40"
-                style={{ top: `${pos.top}px`, left: `${pos.left}px` }}>
-                <div className="cover-container">
-                  <Image
-                    src={image.trim() || "https://via.placeholder.com/150"}
-                    alt={gallery.name || "Gallery Image"}
-                    width={87}
-                    height={109}
-                    className="object-cover"
-                  />
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+      const pos = positions[index];
+
+      return (
+        <Link
+          key={gallery.id}
+          href={`/imagegallery/${gallery.id}`}
+          className="absolute z-40"
+          style={{ top: `${pos.top}px`, left: `${pos.left}px` }}>
+          <div className="cover-container">
+            {/* Loggt den Alt-Text */}
+            <Image
+              src="/plus.svg"
+              alt={gallery.name || "Gallery Image"}
+              width={87}
+              height={109}
+              className="object-cover"
+            />
+          </div>
+        </Link>
+      );
+    })}
+  </div>
+</div>
+
 
       {/* Navigation */}
       <Navigation />

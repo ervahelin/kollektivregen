@@ -1,23 +1,23 @@
-import { NextResponse } from "next/server";
-import { MongoClient } from "mongodb";
+import { PrismaClient } from '@prisma/client';
+import { NextResponse } from 'next/server'; // Import NextResponse
 
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
-const dbName = "kollektivregen";
+const prisma = new PrismaClient();
 
+// Named export for GET method
 export async function GET() {
   try {
-    await client.connect();
-    const db = client.db(dbName);
-    const galleryCollection = db.collection("gallery");
+    const galleries = await prisma.gallery.findMany({
+      select: {
+        uploads: true,
+      },
+    });
 
-    const galleries = await galleryCollection.find().toArray();
-
+    if (!galleries || galleries.length === 0) {
+      return NextResponse.json({ error: "No quotes found" }, { status: 404 });
+    }
     return NextResponse.json(galleries);
   } catch (error) {
-    console.error("Error fetching galleries:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  } finally {
-    await client.close();
+    console.error('Error fetching quotes:', error);
+    return NextResponse.json({ error: "Failed to fetch quotes" }, { status: 500 });
   }
 }
