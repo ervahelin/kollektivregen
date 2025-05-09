@@ -44,7 +44,7 @@ export async function POST(req) {
     console.warn(parsedQuoteId)
     
     const existingGallery = await galleryCollection.findOne({ 
-      quoteid: quoteid ?? null
+      quoteid: quoteid ? parsedQuoteId : null
     });
 
     if (existingGallery) {
