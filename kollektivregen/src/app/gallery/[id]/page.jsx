@@ -12,7 +12,6 @@ const GalleryPage = () => {
   const id = params?.id;
 
   const [gallery, setGallery] = useState(null);
-  const [quote, setQuote] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -22,27 +21,20 @@ const GalleryPage = () => {
         try {
           const res = await fetch(`/api/gallery/${id}`);
           const data = await res.json();
-          setGallery(data);
-  
-          if (data.quote && data.quote.id) {
-            const quoteRes = await fetch(`/api/quotes/single/${data.quote.id}`);
-            const quote = await quoteRes.json();
-            console.log("Zitat-Daten:", quote);
-            setQuote(quote?.text_formatted || null);
-          }
+          setGallery(data); // Directly set the gallery with its related quote
         } catch (error) {
           console.error("Fehler beim Laden der Galerie:", error);
         } finally {
           setLoading(false);
         }
       }
-  
+
       fetchGallery();
     }
   }, [id]);
-  
 
   const uploads = gallery?.uploads || [];
+  const quote = gallery?.quote?.text_formatted; // Directly access the quote text
 
   const handlers = useSwipeable({
     onSwipedLeft: () => setCurrentIndex((currentIndex + 1) % uploads.length),
@@ -64,7 +56,11 @@ const GalleryPage = () => {
     <div className="mx-auto flex flex-col justify-center h-screen -mt-16">
       <div className="padding-21">
         {/* Zitat */}
-        {<div className="mb-6 text-xl italic pb-4"> {quote?.text_formatted || "Zitat wird geladen..."}</div>}
+        {quote ? (
+          <div className="mb-6 text-xl italic pb-4">{quote}</div>
+        ) : (
+          <div className="mb-6 text-xl italic pb-4">Zitat wird geladen...</div>
+        )}
 
         {/* Bild-Slider */}
         {uploads.length > 0 && (
@@ -84,9 +80,8 @@ const GalleryPage = () => {
                 {...handlers}
                 className="aspect-[4/5] w-full max-w-md mx-auto relative overflow-hidden"
               >
-               <div>
-                gallery.id
-               </div>
+                {/* Image Slider */}
+                <div>{gallery.id}</div>
               </div>
               <button
                 onClick={() =>
