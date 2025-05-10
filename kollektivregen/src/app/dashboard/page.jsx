@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Navigation from "../../components/navigation";
 
-// Neue Positionsfunktion
+/* Neue Positionsfunktion
 const generatePositions = (
   count,
   maxCols = 4,
@@ -37,7 +37,7 @@ const generatePositions = (
   }
 
   return positions;
-};
+};*/
 
 const Dashboard = () => {
   const [galleries, setGalleries] = useState([]);
@@ -46,7 +46,7 @@ const Dashboard = () => {
   const [countdown, setCountdown] = useState("");
   const [coverImages, setCoverImages] = useState({});
 
-  const positions = useMemo(() => generatePositions(galleries.length), [galleries]);
+  //const positions = useMemo(() => generatePositions(galleries.length), [galleries]);
 
   const getCurrentWeekKey = () => {
     const now = new Date();
@@ -118,6 +118,7 @@ const Dashboard = () => {
           coverImages[gallery.id] = gallery.coverImage || "https://via.placeholder.com/150";
         });
         setCoverImages(coverImages);
+        
       } catch (error) {
         console.error("Error fetching galleries:", error);
       }
@@ -156,7 +157,7 @@ const Dashboard = () => {
       {/* Zitat + Countdown */}
       <div className="quote">
         <div className="text-[40px] lg:text-[90px]">
-          {quote?.text_formatted || "Zitat wird geladen..."}
+          {quote?.text || "Zitat wird geladen..."}
         </div>
         <div className="countdown">{countdown}</div>
       </div>
@@ -165,29 +166,23 @@ const Dashboard = () => {
       <div className="cover-grid padding-21">
   <div className="relative w-full min-h-[800px]">
     {galleries.map((gallery, index) => {
-      // Auswahl eines zufälligen Bildes aus der Galerie
-      const randomImage = gallery.uploads ? gallery.uploads[Math.floor(Math.random() * gallery.uploads.length)] : null;
-      const image = randomImage ? randomImage.url : coverImages[gallery.id];
-
-      if (!image) return null;
-
-      const pos = positions[index];
-
       return (
         <Link
-          key={gallery.id}
-          href={`/imagegallery/${gallery.id}`}
+          key={gallery.id || index}
+          href={`/gallery/${gallery.id}`}
           className="absolute z-40"
-          style={{ top: `${pos.top}px`, left: `${pos.left}px` }}>
+        >
+        
           <div className="cover-container">
-            {/* Loggt den Alt-Text */}
+            Galerie {gallery.id}
+            {/* Loggt den Alt-Text 
             <Image
               src="/plus.svg"
               alt={gallery.name || "Gallery Image"}
               width={87}
               height={109}
               className="object-cover"
-            />
+            />*/}
           </div>
         </Link>
       );

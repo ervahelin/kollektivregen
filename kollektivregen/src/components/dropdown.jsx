@@ -44,7 +44,7 @@ const CustomSelect = ({ onSelect }) => {
           selectedQuote !== null ? "bg-black text-white" : "bg-transparent text-black"
         }`}
       >
-        <option value={""} className="text-black">
+        <option value={null} className="text-black">
           Kein Zitat
         </option>
         {quotes.slice(0, currentWeek + 1).map((quote) => (

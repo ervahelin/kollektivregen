@@ -17,7 +17,7 @@ const Form = () => {
   const [loading, setLoading] = useState(false); // State für den Ladeindikator
   const router = useRouter();
 
-  const isFormValid = checkboxChecked && imagePreview && selectedQuoteId !== null;  // Sicherstellen, dass ein Quote ausgewählt wurde
+  const isFormValid = (checkboxChecked && imagePreview);
 
   const handleImageUpload = useCallback(async (e) => {
     const file = e.target.files[0];
@@ -61,9 +61,8 @@ const Form = () => {
       e.preventDefault();
       setLoading(true); // Ladeindikator aktivieren
       const name = e.target.name.value;
-
       const payload = {
-        quoteid: selectedQuoteId,  // Die gewählte quoteid
+        quoteid: selectedQuoteId || null,  // Die gewählte quoteid
         name: name || null,
         url: "https://example.com/test.jpg",
         checkbox: checkboxChecked,
