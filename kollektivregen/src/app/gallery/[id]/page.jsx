@@ -54,18 +54,20 @@ const GalleryPage = () => {
 
   return (
     <div className="mx-auto flex flex-col justify-center h-screen -mt-16">
-      <div className="padding-21">
+      <div className="padding-21 flex flex-col lg:flex-row">
         {/* Zitat */}
-        {quote ? (
-          <div className="mb-6 text-xl italic pb-4">{quote}</div>
-        ) : (
-          <div className="mb-6 text-xl italic pb-4">Zitat wird geladen...</div>
-        )}
+        <div className="lg:w-3/12">
+          {quote ? (
+            <div className="mb-6 text-xl italic pb-4 lg:text-[34px]">{quote}</div>
+          ) : (
+            <div className="mb-6 text-xl italic pb-4">Zitat wird geladen...</div>
+          )}
+        </div>
 
         {/* Bild-Slider */}
         {uploads.length > 0 && (
-          <div className="relative w-full flex flex-col gap-2">
-            <div className="flex justify-between items-center">
+          <div className="relative w-full flex flex-col gap-2 lg:gap-4 ">
+            <div className="flex flex-row justify-center items-center gap-16">
               <button
                 onClick={() =>
                   setCurrentIndex(
@@ -74,11 +76,16 @@ const GalleryPage = () => {
                 }
                 className="hidden md:block px-2 py-1"
               >
-                ‹
+                 <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 56.69 56.69"
+                  className="w-5 h-5 fill-black stroke-transparent hover:stroke-black stroke-[2] scale-x-[-1] transition-colors cursor-pointer lg:w-[35px] lg:h-[35px]">
+                  <polygon points="17.21 1.37 12.51 6.01 34.84 28.35 12.51 50.61 17.21 55.32 44.19 28.35 17.21 1.37" />
+                </svg>
               </button>
               <div
                 {...handlers}
-                className="aspect-[4/5] w-full max-w-md mx-auto relative overflow-hidden"
+                className="w-[540px] h-[670px] bg-amber-50  relative overflow-hidden"
               >
                 {/* Image Slider */}
                 <div>{gallery.id}</div>
@@ -89,7 +96,12 @@ const GalleryPage = () => {
                 }
                 className="hidden md:block px-2 py-1"
               >
-                ›
+                 <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 56.69 56.69"
+                  className="w-5 h-5 fill-black stroke-transparent hover:stroke-black stroke-[2] transition-colors cursor-pointer lg:w-[35px] lg:h-[35px]">
+                  <polygon points="17.21 1.37 12.51 6.01 34.84 28.35 12.51 50.61 17.21 55.32 44.19 28.35 17.21 1.37" />
+                </svg>
               </button>
             </div>
 
@@ -117,34 +129,33 @@ const GalleryPage = () => {
             </div>
           </div>
         )}
+        <div className="lg:w-3/12"></div>
       </div>
 
       {/* Bottom Navigation */}
       <div className="flex flex-row justify-between w-12/12 padding-21 fixed bottom-4 h-20 items-center">
-        <div className="flex flex-row gap-2">
-          <BackButton />
+        <div className="flex flex-row gap-2 lg:gap-14">
+          <BackButton/>
           <Link href="/">
             <Image
               src="/logo.svg"
               width={60}
               height={40}
               alt="logo"
-              className="hover:scale-110 active:scale-110 transition"
+              className="hover:scale-110 active:scale-110 transition lg:w-[105px] lg:h-[50px]"
             />
           </Link>
         </div>
         <Link href="/form">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 56.69 56.69"
-            className="w-6 h-6 fill-black stroke-transparent hover:stroke-black stroke-[2] transition-colors"
-          >
-            <polygon points="56.69 25.03 31.67 25.03 31.67 0 25.03 0 25.03 25.03 0 25.03 0 31.67 25.03 31.67 25.03 56.69 31.67 56.69 31.67 31.67 56.69 31.67 56.69 25.03" />
-          </svg>
-        </Link>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 56.69 56.69"
+          className="w-6 h-6 lg:w-[35px] lg:h-[35px] fill-black stroke-transparent hover:stroke-black stroke-[2] transition-colors">
+          <polygon points="56.69 25.03 31.67 25.03 31.67 0 25.03 0 25.03 25.03 0 25.03 0 31.67 25.03 31.67 25.03 56.69 31.67 56.69 31.67 31.67 56.69 31.67 56.69 25.03" />
+        </svg>
+      </Link>
       </div>
 
-      <Navigation />
     </div>
   );
 };
