@@ -8,6 +8,7 @@ export async function GET() {
   try {
     const galleries = await prisma.gallery.findMany({
       select: {
+        id: true,  
         uploads: true,
       },
     });
