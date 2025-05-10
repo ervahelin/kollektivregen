@@ -1,112 +1,17 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
-import Link from "next/link";
+import React, { useEffect, useState, useMemo } from "react";import Link from "next/link";
 import Image from "next/image";
 import Navigation from "../../components/navigation";
-
-/* Neue Positionsfunktion
-const generatePositions = (
-  count,
-  maxCols = 4,
-  imageWidth = 87,
-  imageHeight = 109,
-  stepY = 54
-) => {
-  const positions = [];
-
-  if (count > 0) {
-    positions.push({ top: 0, left: 0 });
-  }
-  if (count > 1) {
-    positions.push({ top: 0, left: (maxCols - 1) * imageWidth });
-  }
-
-  let placed = 2;
-  let row = 1;
-
-  while (placed < count) {
-    for (let col = 0; col < maxCols && placed < count; col++) {
-      const offsetY = col % 2 === 0 ? 0 : stepY;
-      const top = imageHeight + (row - 1) * stepY + offsetY;
-      const left = col * imageWidth;
-      positions.push({ top, left });
-      placed++;
-    }
-    row++;
-  }
-
-  return positions;
-};*/
 
 const Dashboard = () => {
   const [galleries, setGalleries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quote, setQuote] = useState(null);
   const [countdown, setCountdown] = useState("");
+  const [quotes, setQuotes] = useState([]);
+  const [currentWeek, setCurrentWeek] = useState(0);
   const [coverImages, setCoverImages] = useState({});
-
-  //const positions = useMemo(() => generatePositions(galleries.length), [galleries]);
-
-  const getCurrentWeekKey = () => {
-    const now = new Date();
-    const monday = new Date(now);
-    monday.setHours(0, 0, 0, 0);
-    monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
-    return monday.toISOString().split("T")[0];
-  };
-
-  const getNextWeekTime = () => {
-    const now = new Date();
-    const endOfWeek = new Date(now);
-    const day = now.getDay();
-    const diff = 7 - day;
-    endOfWeek.setDate(now.getDate() + diff);
-    endOfWeek.setHours(23, 59, 59, 999);
-    return endOfWeek;
-  };
-
-  const updateCountdown = () => {
-    const end = getNextWeekTime().getTime();
-    const now = new Date().getTime();
-    const delta = Math.max(0, end - now);
-
-    const days = Math.floor(delta / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((delta / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((delta / (1000 * 60)) % 60);
-    const seconds = Math.floor((delta / 1000) % 60);
-
-    setCountdown(
-      `${String(days).padStart(2, "0")}d•${String(hours).padStart(
-        2,
-        "0"
-      )}h•${String(minutes).padStart(2, "0")}m•${String(seconds).padStart(
-        2,
-        "0"
-      )}s`
-    );
-  };
-
-  useEffect(() => {
-    async function fetchQuote() {
-      try {
-        const res = await fetch("/api/quotes/single");
-        const data = await res.json();
-        if (data.error) {
-          console.error(data.error);
-        } else {
-          setQuote(data);
-        }
-      } catch (error) {
-        console.error("Error fetching quote:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchQuote();
-  }, []);
-
   useEffect(() => {
     async function fetchGalleries() {
       try {
@@ -126,19 +31,65 @@ const Dashboard = () => {
 
     fetchGalleries();
   }, []);
-
-  // Countdown Aktualisierung
+  
   useEffect(() => {
-    updateCountdown(); // Sofortige Aktualisierung bei Initialisierung
-    const intervalId = setInterval(updateCountdown, 1000); // Alle 1 Sekunde aktualisieren
+    // API für alle Zitate abrufen
+    const fetchQuotes = async () => {
+      try {
+        const res = await fetch("/api/quotes");
+        const data = await res.json();
+        setQuotes(data);
+      } catch (error) {
+        console.error("Error fetching quotes:", error);
+      }
+    };
 
-    // Aufräumen des Intervalls
-    return () => clearInterval(intervalId);
+    fetchQuotes();
+
+    // Berechne die aktuelle Woche basierend auf dem Startdatum
+    const startDate = new Date('2025-05-09');
+    const currentDate = new Date();
+    const diffInWeeks = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24 * 7));
+    setCurrentWeek(diffInWeeks);
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    // Berechne das Zitat für diese Woche
+    const currentQuote = quotes[currentWeek % quotes.length];
+    setQuote(currentQuote);
+
+    // Countdown bis zum nächsten Zitat
+    const updateCountdown = () => {
+      const end = getNextWeekTime().getTime();
+      const now = new Date().getTime();
+      const delta = Math.max(0, end - now);
+
+      const days = Math.floor(delta / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((delta / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((delta / (1000 * 60)) % 60);
+      const seconds = Math.floor((delta / 1000) % 60);
+
+      setCountdown(
+        `${String(days).padStart(2, "0")}d•${String(hours).padStart(2, "0")}`
+        + `h•${String(minutes).padStart(2, "0")}m•${String(seconds).padStart(2, "0")}s`
+      );
+    };
+
+    updateCountdown();
+    const intervalId = setInterval(updateCountdown, 1000);
+    return () => clearInterval(intervalId);
+
+  }, [currentWeek, quotes]);
+
+  const getNextWeekTime = () => {
+    const now = new Date();
+    const diff = 7 - now.getDay();
+    const endOfWeek = new Date(now.setDate(now.getDate() + diff));
+    endOfWeek.setHours(23, 59, 59, 999);
+    return endOfWeek;
+  };
+
+  if (!quote) return <div>Loading...</div>;
 
   return (
     <div className="h-screen relative">
@@ -154,10 +105,10 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Zitat + Countdown */}
+      {/* Zitat und Countdown */}
       <div className="quote">
-        <div className="text-[40px] lg:text-[90px]">
-          {quote?.text || "Zitat wird geladen..."}
+        <div className="text-[40px] lg:text-[90px] lg:max-w-8/12">
+          {quote.text}
         </div>
         <div className="countdown">{countdown}</div>
       </div>
@@ -189,8 +140,6 @@ const Dashboard = () => {
     })}
   </div>
 </div>
-
-
       {/* Navigation */}
       <Navigation />
     </div>

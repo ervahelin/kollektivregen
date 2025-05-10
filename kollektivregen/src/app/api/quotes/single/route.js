@@ -5,8 +5,14 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    // Einen zufälligen Quote holen
-    const quotes = await prisma.quote.findMany({
+    const currentDate = new Date();
+    const currentWeek = Math.floor((currentDate - new Date('2025-05-09')) / (1000 * 60 * 60 * 24 * 7));
+
+    // Hole das Zitat für die aktuelle Woche
+    const quote = await prisma.quote.findFirst({
+      where: {
+        week: currentWeek, // Angenommen, du hast ein Feld 'week' in der Datenbank
+      },
       select: {
         id: true,
         text: true,
@@ -14,16 +20,13 @@ export async function GET() {
       },
     });
 
-    if (!quotes || quotes.length === 0) {
-      return NextResponse.json({ error: "No quotes found" }, { status: 404 });
+    if (!quote) {
+      return NextResponse.json({ error: "Quote not found" }, { status: 404 });
     }
 
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    const randomQuote = quotes[randomIndex];
-
-    return NextResponse.json(randomQuote);
+    return NextResponse.json(quote);
   } catch (error) {
-    console.error("Error fetching single quote:", error);
+    console.error("Error fetching quote:", error);
     return NextResponse.json({ error: "Failed to fetch quote" }, { status: 500 });
   }
 }
