@@ -25,6 +25,7 @@ model FormUpload {
   createdAt DateTime @default(now())
   quoteId   String?
   quote     Quote?    @relation(fields: [quoteId], references: [id])
+  uploadEntry UploadEntry?
 }
 
 model Gallery {
@@ -36,7 +37,8 @@ model Gallery {
 
 model UploadEntry {
   id        String  @id @default(uuid())
-  uploadId  String
+  uploadId  String  @unique
+  formUpload  FormUpload  @relation(fields: [uploadId], references: [id])
   name      String
   url       String
   galleryId String
