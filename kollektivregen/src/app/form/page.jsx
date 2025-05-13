@@ -1,6 +1,6 @@
 // form/page.js
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import BackButton from "../../components/backbutton";
 import CustomSelect from "../../components/dropdown";
@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import imageCompression from "browser-image-compression";
 import { FadeLoader } from "react-spinners";
+
 const Form = () => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
@@ -16,6 +17,7 @@ const Form = () => {
   const [nameFilled, setNameFilled] = useState(false);
   const [loading, setLoading] = useState(false); // State für den Ladeindikator
   const router = useRouter();
+  const fileInputRef = useRef(null); 
 
   const isFormValid = (checkboxChecked && imagePreview);
 
@@ -56,42 +58,46 @@ const Form = () => {
     }
   }, []);
 
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-      setLoading(true); // Ladeindikator aktivieren
-      const name = e.target.name.value;
-      const payload = {
-        quoteid: selectedQuoteId || null,  // Die gewählte quoteid
-        name: name || null,
-        url: "https://example.com/test.jpg",
-        checkbox: checkboxChecked,
-      };
-      console.log("Payload:", payload);
-      try {
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
+const handleSubmit = useCallback(
+  async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-        const data = await res.json();
-        if (data.success) {
-          router.push("/form/success");
-        } else {
-          alert("Fehler beim Hochladen: " + data.error);
-        }
-      } catch (err) {
-        console.error("Fehler:", err);
-        alert("Netzwerkfehler.");
-      } finally {
-        setLoading(false); // Ladeindikator deaktivieren
+    const name = e.target.name.value;
+    const file = fileInputRef.current?.files?.[0];
+
+    if (!file) {
+      setLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("quoteid", selectedQuoteId || "");
+    formData.append("name", name || "");
+    formData.append("checkbox", checkboxChecked.toString());
+    formData.append("image", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        router.push("/form/success");
+      } else {
+        alert("Fehler beim Hochladen: " + data.error);
       }
-    },
-    [imagePreview, checkboxChecked, selectedQuoteId, router]
-  );
+    } catch (err) {
+      console.error("Fehler:", err);
+      alert("Netzwerkfehler.");
+    } finally {
+      setLoading(false);
+    }
+  },
+  [checkboxChecked, selectedQuoteId, router]
+);
 
   return (
     <div>
@@ -132,11 +138,13 @@ const Form = () => {
               </div>
             )}
             <input
+              ref={fileInputRef} 
               type="file"
               id="bild"
               accept="image/*"
               className="absolute inset-0 opacity-0 cursor-pointer z-10"
               onChange={handleImageUpload}
+              required
             />
           </div>
           {imageError && (
