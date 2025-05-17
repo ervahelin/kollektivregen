@@ -6,8 +6,11 @@ export async function GET(request, { params }) {
 
   try {
     const gallery = await prisma.gallery.findUnique({
-      where: { id: id }, // Wichtig: ID ist vom Typ String, NICHT parseInt!
-      include: { uploads: true, quote: true }, // Include related uploads and quote
+      where: { id: id }, 
+      include: {
+        uploads:true,
+        quote: true,
+      },
     });
 
     if (!gallery) {

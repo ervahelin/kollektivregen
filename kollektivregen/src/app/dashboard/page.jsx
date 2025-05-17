@@ -15,25 +15,35 @@ const Dashboard = () => {
   const [coverImages, setCoverImages] = useState({});
   const [formattedQuote, setFormattedQuote] = useState(null);
 
-  useEffect(() => {
-    async function fetchGalleries() {
-      try {
-        const res = await fetch("/api/gallery");
-        const data = await res.json();
-        setGalleries(data);
-        const coverImages = {};
-        data.forEach((gallery) => {
-          coverImages[gallery.id] = gallery.coverImage || "https://via.placeholder.com/150";
-        });
-        setCoverImages(coverImages);
-        
-      } catch (error) {
-        console.error("Error fetching galleries:", error);
-      }
-    }
+ useEffect(() => {
+  async function fetchGalleries() {
+    try {
+      const res = await fetch("/api/gallery");
+      const data = await res.json();
 
-    fetchGalleries();
-  }, []);
+      const randomCovers = {};
+      data.forEach((gallery) => {
+        const validUploads = gallery.uploads.filter(u => u.url);
+        const random = validUploads.length > 0 
+          ? validUploads[Math.floor(Math.random() * validUploads.length)]
+          : null;
+
+        randomCovers[gallery.id] = random?.url || "/placeholder.png";
+
+      });
+
+
+      setGalleries(data);
+      setCoverImages(randomCovers);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching galleries:", error);
+    }
+  }
+
+  fetchGalleries();
+}, []);
+
   
   useEffect(() => {
     // API für alle Zitate abrufen
@@ -140,25 +150,22 @@ const Dashboard = () => {
       {/* Galerie Bilder */}
       <div className="cover-grid padding-21">
   <div className="relative w-full min-h-[800px]">
-    {galleries.map((gallery, index) => {
+    {galleries.map((gallery) => {
+      const coverUrl = coverImages[gallery.id] || "/placeholder.png";
+
       return (
         <Link
-          key={gallery.id || index}
+          key={gallery.id}
           href={`/gallery/${gallery.id}`}
           className="absolute z-40"
         >
-        
-          <div className="cover-container">
-            Galerie {gallery.id}
-            {/* Loggt den Alt-Text 
-            <Image
-              src="/plus.svg"
-              alt={gallery.name || "Gallery Image"}
-              width={87}
-              height={109}
-              className="object-cover"
-            />*/}
-          </div>
+          <Image
+            src={coverUrl}
+            alt={`Cover Bild Galerie ${gallery.id}`}
+            width={300}
+            height={300}
+            className="object-cover"
+          />
         </Link>
       );
     })}
