@@ -8,7 +8,13 @@ export async function GET(request, { params }) {
     const gallery = await prisma.gallery.findUnique({
       where: { id: id }, 
       include: {
-        uploads:true,
+        uploads: {
+          select: {
+            id: true,
+            name: true,
+            url: true,
+          },
+        },
         quote: true,
       },
     });

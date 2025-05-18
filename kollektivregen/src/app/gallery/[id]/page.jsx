@@ -88,7 +88,13 @@ const GalleryPage = () => {
                 className="w-[540px] h-[670px] bg-amber-50  relative overflow-hidden"
               >
                 {/* Image Slider */}
-                <div>{gallery.id}</div>
+                <Image
+                  src={uploads[currentIndex].url}
+                  alt={uploads[currentIndex].name || `Bild ${currentIndex + 1}`}
+                  fill
+                  style={{ objectFit: "cover" }}
+                  priority
+                />
               </div>
               <button
                 onClick={() =>
