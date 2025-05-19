@@ -142,7 +142,7 @@ const GalleryPage = () => {
       <div className="flex flex-row justify-between w-12/12 padding-21 fixed bottom-4 h-20 items-center">
         <div className="flex flex-row gap-2 lg:gap-14">
           <BackButton/>
-          <Link href="/">
+          <Link href="/dashboard">
             <Image
               src="/logo.svg"
               width={60}

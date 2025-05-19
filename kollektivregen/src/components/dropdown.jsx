@@ -22,7 +22,7 @@ const Dropdown = ({ onSelect }) => {
   
         const visibleQuotes = data.slice(0, weeksSinceStart + 1);
   
-        setQuotes([{ id: null, text: "Ohne Spruch" }, ...visibleQuotes]);
+        setQuotes([{ id: "speziell", text: "Ohne Spruch" }, ...visibleQuotes]);
       } catch (err) {
         console.error("Fehler beim Laden der Zitate:", err);
       }

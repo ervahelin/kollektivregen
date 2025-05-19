@@ -72,7 +72,7 @@ const handleSubmit = useCallback(
     }
 
     const formData = new FormData();
-    formData.append("quoteid", selectedQuoteId || "");
+    formData.append("quoteid", selectedQuoteId || "speziell");
     formData.append("name", name || "");
     formData.append("checkbox", checkboxChecked.toString());
     formData.append("image", file);
