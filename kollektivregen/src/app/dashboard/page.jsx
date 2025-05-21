@@ -14,6 +14,12 @@ const Dashboard = () => {
   const [currentWeek, setCurrentWeek] = useState(0);
   const [coverImages, setCoverImages] = useState({});
   const [formattedQuote, setFormattedQuote] = useState(null);
+  const [animate, setAnimate] = useState(false);
+
+  useEffect(() => {
+    setAnimate(true);
+  }, []);
+
 
  useEffect(() => {
   async function fetchGalleries() {
@@ -145,7 +151,7 @@ const Dashboard = () => {
   if (!quote) return <div className="padding-21 flex items-center justify-center h-screen"> <FadeLoader color="#1C1B1B" /></div>;
 
   return (
-    <div className="h-screen relative">
+    <div className={`h-screen relative ${animate ? 'fade-slide-in' : ''}`}>
       {/* Text über den Bildern */}
       <div className="flex absolute z-10 top-1/2 w-full lg:justify-center">
         <div className="-translate-y-1/2 body-text padding-21 lg:w-6/12">
