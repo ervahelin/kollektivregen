@@ -20,6 +20,8 @@
   --background: #f0f0f0;
   --foreground: #1c1b1b;
   --grey: #afafaf;
+  --quote-opacity: 1;
+  --quote-blur: 0px;
 }
 
 /* === Base Styles === */
@@ -94,6 +96,12 @@ body {
   z-index: 100;
   height: 800px;
   background: linear-gradient(to top, #f0f0f0 90%, transparent 100%);
+}
+
+.quote-fx {
+  opacity: var(--quote-opacity);
+  filter: blur(var(--quote-blur));
+  transition: opacity 0.3s ease-out, filter 0.3s ease-out;
 }
 
 .quote {

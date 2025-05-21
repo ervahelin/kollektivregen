@@ -94,6 +94,25 @@ const Dashboard = () => {
 
   }, [currentWeek, quotes]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const fadeStart = 100;
+      const fadeEnd = 600;
+
+      const progress = Math.min(Math.max((scrollY - fadeStart) / (fadeEnd - fadeStart), 0), 1);
+
+      const newOpacity = 1 - progress;
+      const newBlur = progress * 5;
+
+      document.documentElement.style.setProperty('--quote-opacity', newOpacity.toString());
+      document.documentElement.style.setProperty('--quote-blur', `${newBlur}px`);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const getNextWeekTime = () => {
     const now = new Date();
     const diff = 7 - now.getDay();
@@ -140,37 +159,51 @@ const Dashboard = () => {
       </div>
 
       {/* Zitat und Countdown */}
-      <div className="quote">
-        <div className="text-[40px] leading-[46px] lg:leading-[96px] lg:text-[90px] lg:max-w-8/12 real-text-pro-semilight">
+     <div className="quote quote-fx">
+      <div className="text-[40px] leading-[46px] lg:leading-[96px] lg:text-[90px] lg:max-w-8/12 real-text-pro-semilight">
         {formattedQuote}
-        </div>
-        <div className="countdown">{countdown}</div>
       </div>
+      <div className="countdown">{countdown}</div>
+    </div>
+
 
       {/* Galerie Bilder */}
-      <div className="cover-grid padding-21">
-  <div className="relative w-full min-h-[800px]">
-    {galleries.map((gallery) => {
-      const coverUrl = coverImages[gallery.id] || "/placeholder.png";
+      <div className="cover-grid grid grid-cols-6 gap-4 w-full padding-21">
+  {galleries.map((gallery, index) => {
+    const coverUrl = coverImages[gallery.id] || "/placeholder.png";
 
-      return (
-        <Link
-          key={gallery.id}
-          href={`/gallery/${gallery.id}`}
-          className="absolute z-40"
-        >
-          <Image
-            src={coverUrl}
-            alt={`Cover Bild Galerie ${gallery.id}`}
-            width={300}
-            height={300}
-            className="object-cover"
-          />
-        </Link>
-      );
-    })}
-  </div>
+    // manuelle Positionierung
+    const positions = [
+      "col-start-1 row-start-1",   // Bild 1
+      "col-start-7 row-start-1",   // Bild 2
+      "col-start-11 row-start-1",  // Bild 3
+      "col-start-3 row-start-2",   // Bild 4 (versetzt)
+      "col-start-7 row-start-3",   // Bild 5 (versetzt)
+      "col-start-1 row-start-4",   // Bild 6
+      "col-start-7 row-start-4",   // Bild 7
+      "col-start-11 row-start-4",  // Bild 8
+    ];
+
+    const positionClass = positions[index] || "";
+
+    return (
+      <Link
+        key={gallery.id}
+        href={`/gallery/${gallery.id}`}
+        className={`relative col-span-2 ${positionClass}`}
+      >
+        <Image
+          src={coverUrl}
+          alt={`Cover Bild Galerie ${gallery.id}`}
+          width={270}
+          height={330}
+          className="cover w-full h-auto"
+        />
+      </Link>
+    );
+  })}
 </div>
+
       {/* Navigation */}
       <Navigation />
     </div>
