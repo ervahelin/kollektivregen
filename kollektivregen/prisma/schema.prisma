@@ -43,4 +43,5 @@ model UploadEntry {
   url       String
   galleryId String
   gallery   Gallery @relation("GalleryUploads", fields: [galleryId], references: [id])
+  createdAt DateTime @default(now())
 }

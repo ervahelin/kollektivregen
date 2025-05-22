@@ -9,13 +9,7 @@ export async function GET() {
       select: {
         id: true,
         quoteId: true,
-        uploads: {
-          select: {
-            id: true,
-            name: true,
-            url: true,
-          },
-        },
+        uploads: true,
       },
     });
 

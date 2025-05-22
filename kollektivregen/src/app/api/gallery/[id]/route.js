@@ -2,19 +2,14 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 export async function GET(request, { params }) {
-  const { id } = params;
+  const awaitedParams = await params;
+  const { id } = awaitedParams;
 
   try {
     const gallery = await prisma.gallery.findUnique({
       where: { id: id }, 
       include: {
-        uploads: {
-          select: {
-            id: true,
-            name: true,
-            url: true,
-          },
-        },
+        uploads: true,
         quote: true,
       },
     });

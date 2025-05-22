@@ -6,14 +6,13 @@ const prisma = new PrismaClient();
 export async function POST(req) {
   try {
     const formData = await req.formData();
-
-    const quoteid = formData.get("quoteid");
+    const quoteid = formData.get("quoteid") || "speziell";
     const name = formData.get("name");
     const checkbox = formData.get("checkbox") === "true";
     const file = formData.get("image");
 
     // Validation
-    if (!quoteid || !file || typeof file !== "object") {
+    if ( !file || typeof file !== "object") {
       return new Response(
         JSON.stringify({ success: false, error: "Missing or invalid data." }),
         { status: 400 }
@@ -54,7 +53,7 @@ export async function POST(req) {
     // Save form upload
     const formUpload = await prisma.formUpload.create({
       data: {
-        quoteId: quoteid,
+        quoteId: quoteid || "speziell",
         name: name || "",
         url: cloudflareUrl,
         checkbox,
