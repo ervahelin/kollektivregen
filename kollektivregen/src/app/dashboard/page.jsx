@@ -127,12 +127,17 @@ const Dashboard = () => {
 
 
   const getNextWeekTime = () => {
-    const now = new Date();
-    const diff = 7 - now.getDay();
-    const endOfWeek = new Date(now.setDate(now.getDate() + diff));
-    endOfWeek.setHours(23, 59, 59, 999);
-    return endOfWeek;
-  };
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const daysUntilNextFriday = (5 - dayOfWeek + 7) % 7 || 7;
+
+  const nextFriday = new Date(now);
+  nextFriday.setDate(now.getDate() + daysUntilNextFriday);
+  nextFriday.setHours(23, 59, 59, 999);
+
+  return nextFriday;
+};
+
 
   const renderItalicizedQuote = (text) => {
     if (!text) return null;
