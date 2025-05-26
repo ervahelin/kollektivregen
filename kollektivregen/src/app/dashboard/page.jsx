@@ -264,8 +264,8 @@ const positionsDesktop = [
             </div>
           )}
          <div className="w-full flex justify-center pt-20 pb-[15vh] text-[#afafaf]">
-          <Link href="" className="mx-2 link">Impressum</Link> | 
-          <Link href="" className="mx-2 link">Datenschutz</Link>
+          <Link href="/impressum" className="mx-2 link">Impressum</Link> | 
+          <Link href="/datenschutz" className="mx-2 link">Datenschutz</Link>
         </div>
       </div>
      

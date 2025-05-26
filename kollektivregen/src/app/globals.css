@@ -172,12 +172,12 @@ select:hover,
 }
 
 /* === Dropdown Menu === */
-ul {
+.drop ul {
   @apply absolute z-10 w-full h-screen;
   background-color: var(--background);
 }
 
-li {
+.drop li {
   @apply active:bg-[#1C1B1B] active:text-white flex items-center border-b last:border-b-0 cursor-pointer hover:font-semibold hover:border-[#1C1B1B] hover:border-3 ease-in-out transition-all duration-100 text-sm lg:text-base;
   font-family: ff-real-headline-pro, sans-serif;
   font-weight: 400;
@@ -243,4 +243,8 @@ nextjs-portal {
 
 .fade-slide-in {
   animation: fadeSlideIn 0.8s ease-out;
+}
+
+h2{
+  @apply text-2xl lg:text-[34px] font-medium;
 }

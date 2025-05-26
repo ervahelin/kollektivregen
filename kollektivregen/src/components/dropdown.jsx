@@ -50,7 +50,7 @@ const Dropdown = ({ onSelect }) => {
   };
 
   return (
-    <div ref={dropdownRef} className="relative w-full">
+    <div ref={dropdownRef} className="relative w-full drop">
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
