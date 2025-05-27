@@ -3,19 +3,27 @@ import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '0', 10); 
+    const limit = parseInt(searchParams.get('limit') || '12', 10);
+    const skip = page * limit;
+
     const galleries = await prisma.gallery.findMany({
+      skip,
+      take: limit,
       select: {
         id: true,
         quoteId: true,
-        uploads: true,
+        uploads: {
+          select: {
+            id: true,
+            url: true,
+          },
+        },
       },
     });
-
-    if (!galleries || galleries.length === 0) {
-      return NextResponse.json({ error: "No galleries found" }, { status: 404 });
-    }
 
     return NextResponse.json(galleries);
   } catch (error) {

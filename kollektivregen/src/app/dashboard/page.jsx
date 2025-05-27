@@ -18,38 +18,41 @@ const Dashboard = () => {
   const [animate, setAnimate] = useState(false);
   const [hoveredId, setHoveredId] = useState(null);
   const [visibleCount, setVisibleCount] = useState(12);
+  const [page, setPage] = useState(0);
+  const pageSize = 12;
 
   useEffect(() => {
     setAnimate(true);
   }, []);
 
   useEffect(() => {
-    async function fetchGalleries() {
-      try {
-        const res = await fetch("/api/gallery");
-        const data = await res.json();
+  async function fetchGalleries() {
+    try {
+      const res = await fetch(`/api/gallery?page=${page}&limit=${pageSize}`);
+      const data = await res.json();
 
-        const randomCovers = {};
-        data.forEach((gallery) => {
-          const validUploads = gallery.uploads.filter((u) => u.url);
-          const random =
-            validUploads.length > 0
-              ? validUploads[Math.floor(Math.random() * validUploads.length)]
-              : null;
+      const randomCovers = {};
+      data.forEach((gallery) => {
+        const validUploads = gallery.uploads.filter((u) => u.url);
+        const random =
+          validUploads.length > 0
+            ? validUploads[Math.floor(Math.random() * validUploads.length)]
+            : null;
 
-          randomCovers[gallery.id] = random?.url || "/placeholder.png";
-        });
+        randomCovers[gallery.id] = random?.url || "/placeholder.png";
+      });
 
-        setGalleries(data);
-        setCoverImages(randomCovers);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching galleries:", error);
-      }
+      setGalleries((prev) => (page === 0 ? data : [...prev, ...data]));
+      setCoverImages((prev) => ({ ...prev, ...randomCovers }));
+      if (page === 0) setLoading(false);
+    } catch (error) {
+      console.error("Error fetching galleries:", error);
     }
+  }
 
-    fetchGalleries();
-  }, []);
+  fetchGalleries();
+}, [page]);
+
 
   useEffect(() => {
     const fetchQuotes = async () => {
@@ -194,7 +197,7 @@ const positionsDesktop = [
 
   // load more button
   const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 3);
+    setPage((prev) => prev + 1);
   };
 
 
@@ -220,7 +223,7 @@ const positionsDesktop = [
       {/* Galerie */}
       <div className="cover-grid flex flex-col bottom-0 z-10">
       <div className="grid grid-cols-4 lg:grid-cols-6 w-full padding-21 auto-rows-[109px] lg:auto-rows-[340px]">
-        {galleries.slice(0, visibleCount).map((gallery, index) => {
+        {galleries.map((gallery, index) => {
         const coverUrl = coverImages[gallery.id] || "/placeholder.png";
         const positionClass = `${positionsMobile[index % positionsMobile.length]} ${positionsDesktop[index % positionsDesktop.length]}`;
         const isHovered = hoveredId === null || hoveredId === gallery.id;
