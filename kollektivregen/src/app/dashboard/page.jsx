@@ -203,9 +203,9 @@ const positionsDesktop = [
       {/* Intro-Text */}
       <div className="flex absolute z-10 top-[18vh] lg:top-[22vh] w-full lg:justify-center intro-fade">
         <div className="body-text padding-21 lg:w-6/12">
-          Wir möchten dich dazu anregen, wieder bewusster im Moment zu leben. Mithilfe von wöchentlichen Sprüchen
-          regenerieren wir deine Wahrnehmung und präsentieren dir den Alltag als eine Quelle voller Inspiration,
-          aufregender Entdeckungen und überraschender Perspektiven.
+          Wir möchten dich dazu an<i>regen</i>, wieder bewusster im Moment zu leben. Mithilfe von wöchentlichen Sprüchen
+          <i>regen</i>erieren wir deine Wahrnehmung und präsentieren dir den Alltag als eine Quelle voller Inspiration,
+          auf<i>regen</i>der Entdeckungen und überraschender Perspektiven.
         </div>
       </div>
 
@@ -263,7 +263,7 @@ const positionsDesktop = [
               </button>
             </div>
           )}
-         <div className="w-full flex justify-center pt-20 pb-[15vh] text-[#afafaf]">
+         <div className="w-full flex justify-center pt-20 pb-[15vh] text-[#afafaf] text-sm">
           <Link href="/impressum" className="mx-2 link">Impressum</Link> | 
           <Link href="/datenschutz" className="mx-2 link">Datenschutz</Link>
         </div>

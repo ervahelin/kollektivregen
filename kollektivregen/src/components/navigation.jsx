@@ -14,7 +14,7 @@ const Navigation = () => {
           width={60}
           height={40}
           alt="logo"
-          className="hover:scale-105 active:scale-105 transition lg:w-[105px] lg:h-[50px]"
+          className="transition lg:w-[105px] lg:h-[50px]"
         />
       </Link>
       <Link href="/form">

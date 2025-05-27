@@ -90,7 +90,7 @@ body {
   }
 }
 .link{
-  @apply underline text-[#AFAFAF] hover:text-[#1c1b1b] cursor-pointer transition -mt-[10vh] lg:mt-0 lg:text-xl
+  @apply underline text-[#AFAFAF] hover:text-[#1c1b1b] cursor-pointer transition -mt-[10vh] lg:mt-0 
 }
 
 /* === Components === */

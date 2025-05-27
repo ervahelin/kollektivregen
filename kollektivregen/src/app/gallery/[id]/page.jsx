@@ -153,7 +153,7 @@ const GalleryPage = () => {
               width={60}
               height={40}
               alt="logo"
-              className="hover:scale-110 active:scale-110 transition lg:w-[105px] lg:h-[50px]"
+              className="transition lg:w-[105px] lg:h-[50px]"
             />
           </Link>
         </div>
