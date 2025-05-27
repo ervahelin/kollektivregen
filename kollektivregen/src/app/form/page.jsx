@@ -58,46 +58,62 @@ const Form = () => {
     }
   }, []);
 
-const handleSubmit = useCallback(
-  async (e) => {
-    e.preventDefault();
-    setLoading(true);
+const handleSubmit = useCallback(async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    const name = e.target.name.value;
-    const file = fileInputRef.current?.files?.[0];
+  const name = e.target.name.value;
+  const file = fileInputRef.current?.files?.[0];
+  if (!file) return;
 
-    if (!file) {
-      setLoading(false);
+  try {
+    // 1. Upload-URL von Cloudflare holen
+    const tokenRes = await fetch("/api/cloudflare-token");
+    const { uploadURL } = await tokenRes.json();
+
+    // 2. Bild direkt an Cloudflare senden
+    const imageFormData = new FormData();
+    imageFormData.append("file", file);
+
+    const uploadRes = await fetch(uploadURL, {
+      method: "POST",
+      body: imageFormData,
+    });
+
+    const uploadData = await uploadRes.json();
+
+    if (!uploadData.success) {
+      alert("Upload zu Cloudflare fehlgeschlagen.");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("quoteid", selectedQuoteId || "speziell");
-    formData.append("name", name || "");
-    formData.append("checkbox", checkboxChecked.toString());
-    formData.append("image", file);
+    const imageUrl = uploadData.result.variants[0]; // oder .id oder .url
 
-    try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+    // 3. URL und Formulardaten an deinen Server senden
+    const saveRes = await fetch("/api/upload", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        quoteid: selectedQuoteId || "speziell",
+        name: name || "",
+        checkbox: checkboxChecked,
+        url: imageUrl,
+      }),
+    });
 
-      const data = await res.json();
-      if (data.success) {
-        router.push("/form/success");
-      } else {
-        alert("Fehler beim Hochladen: " + data.error);
-      }
-    } catch (err) {
-      console.error("Fehler:", err);
-      alert("Netzwerkfehler.");
-    } finally {
-      setLoading(false);
+    const data = await saveRes.json();
+    if (data.success) {
+      router.push("/form/success");
+    } else {
+      alert("Fehler beim Speichern: " + data.error);
     }
-  },
-  [checkboxChecked, selectedQuoteId, router]
-);
+  } catch (err) {
+    console.error("Fehler:", err);
+    alert("Netzwerkfehler.");
+  } finally {
+    setLoading(false);
+  }
+}, [checkboxChecked, selectedQuoteId, router]);
 
   return (
     <div className="h-screen">
