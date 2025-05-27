@@ -178,7 +178,7 @@ select:hover,
 }
 
 .drop li {
-  @apply active:bg-[#1C1B1B] active:text-white flex items-center border-b last:border-b-0 cursor-pointer hover:font-semibold hover:border-[#1C1B1B] hover:border-3 ease-in-out transition-all duration-100 text-sm lg:text-base;
+  @apply active:bg-[#1C1B1B] active:text-white flex items-center border-b last:border-b-0 cursor-pointer hover:bg-[#1C1B1B] hover:text-white ease-in-out transition-all duration-100 text-sm lg:text-base;
   font-family: ff-real-headline-pro, sans-serif;
   font-weight: 400;
   background-color: var(--background);

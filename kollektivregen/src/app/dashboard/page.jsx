@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Navigation from "../../components/navigation";
-import { FadeLoader } from "react-spinners";
+import { BarLoader } from "react-spinners";
 
 const Dashboard = () => {
   const [galleries, setGalleries] = useState([]);
@@ -188,7 +188,7 @@ const positionsDesktop = [
   if (!quote)
     return (
       <div className="padding-21 flex items-center justify-center h-screen">
-        <FadeLoader color="#1C1B1B" />
+        <BarLoader color="#1C1B1B" />
       </div>
     );
 
@@ -263,9 +263,9 @@ const positionsDesktop = [
               </button>
             </div>
           )}
-         <div className="w-full flex justify-center pt-20 pb-[15vh] text-[#afafaf] text-sm">
-          <Link href="/impressum" className="mx-2 link">Impressum</Link> | 
-          <Link href="/datenschutz" className="mx-2 link">Datenschutz</Link>
+         <div className="w-full flex  flex-row justify-center pt-20 pb-[15vh] text-[#afafaf] text-sm gap-4">
+          <Link href="/impressum" className="link">Impressum</Link>
+          <Link href="/datenschutz" className="link"> Datenschutz</Link>
         </div>
       </div>
      

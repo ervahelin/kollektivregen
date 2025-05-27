@@ -7,7 +7,7 @@ import CustomSelect from "../../components/dropdown";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import imageCompression from "browser-image-compression";
-import { FadeLoader } from "react-spinners";
+import { BarLoader } from "react-spinners";
 
 const Form = () => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
@@ -236,7 +236,7 @@ const handleSubmit = useCallback(async (e) => {
       </div>
       {loading && (
         <div className="fixed inset-0 z-[9999] bg-white/70 backdrop-blur flex items-center justify-center">
-          <FadeLoader color="#1C1B1B" />
+          <BarLoader color="#1C1B1B" />
         </div>
       )}
 
