@@ -148,8 +148,8 @@ const Form = () => {
       <div className="navigation">
         <div className="flex flex-row gap-5">
           <BackButton />
-          <Link href="/">
-            <Image src="/logo.svg" alt="Logo" height={120} width={120} />
+          <Link href="/dashboard">
+            <Image src="/logo.svg" alt="Logo" height={40} width={60} className="hover:scale-110 active:scale-110 transition"/>
           </Link>
         </div>
       </div>

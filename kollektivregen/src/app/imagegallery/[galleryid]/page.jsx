@@ -52,7 +52,8 @@ export default function GalleryDetailPage() {
   const uploads = gallery.uploads || [];
 
   return (
-    <div className="max-w-4xl mx-auto flex flex-col justify-center h-screen -mt-16">
+    <div className="mx-auto flex flex-col justify-center h-screen -mt-16">
+      <div className="padding-21">
       {/* Zitat */}
       {quote && <div className="mb-6 text-xl italic pb-4">{quote}</div>}
 
@@ -109,12 +110,25 @@ export default function GalleryDetailPage() {
           </div>
         </div>
       )}
-      <div className="flex flex-row p-4 fixed bottom-4 w-full gap-2">
-        <BackButton />
-        <Link href="/">
-          <Image src="/logo.svg" width={40} height={40} alt="logo" />
+      </div>
+      <div className="flex flex-row justify-between w-12/12 padding-21 fixed bottom-4 h-20 items-center">
+        <div className="flex flex-row gap-2">
+          <BackButton/>
+          <Link href="/">
+            <Image src="/logo.svg" width={60} height={40} alt="logo" className="hover:scale-110 active:scale-110 transition"/>
+          </Link>
+        </div>
+        <Link href="/form">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 56.69 56.69"
+                className="w-6 h-6 fill-black stroke-transparent hover:stroke-black stroke-[2] transition-colors"
+            >
+                <polygon points="56.69 25.03 31.67 25.03 31.67 0 25.03 0 25.03 25.03 0 25.03 0 31.67 25.03 31.67 25.03 56.69 31.67 56.69 31.67 31.67 56.69 31.67 56.69 25.03" />
+            </svg>
         </Link>
       </div>
+
     </div>
   );
 }
