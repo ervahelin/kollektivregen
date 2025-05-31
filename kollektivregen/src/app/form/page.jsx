@@ -7,7 +7,7 @@ import CustomSelect from "../../components/dropdown";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import imageCompression from "browser-image-compression";
-
+import { FadeLoader } from "react-spinners";
 const Form = () => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
@@ -127,8 +127,8 @@ const Form = () => {
               </div>
             )}
             {loading && (
-              <div className="absolute inset-0 flex items-center justify-center text-xl font-bold">
-                Lade...
+              <div className="absolute inset-0 flex items-center justify-center text-xl font-bold z-10 bg-grey-200 h-screen">
+                <FadeLoader color="#1C1B1B" />
               </div>
             )}
             <input
@@ -201,7 +201,7 @@ const Form = () => {
       </form>
 
       <div className="navigation">
-        <div className="flex flex-row gap-5 lg:gap-10 justify-center">
+        <div className="flex flex-row gap-5 lg:gap-14 justify-center">
           <BackButton />
           <Link href="/dashboard">
             <Image

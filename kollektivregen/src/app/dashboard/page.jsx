@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from "react";import Link from "next/link";
 import Image from "next/image";
 import Navigation from "../../components/navigation";
+import { FadeLoader } from "react-spinners";
 
 const Dashboard = () => {
   const [galleries, setGalleries] = useState([]);
@@ -89,7 +90,7 @@ const Dashboard = () => {
     return endOfWeek;
   };
 
-  if (!quote) return <div>Loading...</div>;
+  if (!quote) return <div className="padding-21 flex items-center justify-center h-screen"> <FadeLoader color="#1C1B1B" /></div>;
 
   return (
     <div className="h-screen relative">
