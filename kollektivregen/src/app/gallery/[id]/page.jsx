@@ -58,9 +58,9 @@ const GalleryPage = () => {
         {/* Zitat */}
         <div className="lg:w-3/12">
           {quote ? (
-            <div className="mb-6 text-xl italic pb-4 lg:text-[34px]">{quote}</div>
+            <div className="mb-6 text-[22px] leading-[28px] real-text-pro-semilight-italic  pb-4 lg:text-[34px] lg:leading-10">{quote}</div>
           ) : (
-            <div className="mb-6 text-xl italic pb-4">Zitat wird geladen...</div>
+            <div className="mb-6 text-[22px] leading-[28px] real-text-pro-semilight-italic  pb-4 lg:text-[34px] lg:leading-10">Zitat wird geladen...</div>
           )}
         </div>
 

@@ -1,17 +1,63 @@
+/* === Imports === */
 @import "tailwindcss";
+@import url("https://use.typekit.net/vrt6azc.css");
 
+/* === Fonts === */
+.real-text-pro-semilight {
+  font-family: "ff-real-text-pro-2", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.real-text-pro-semilight-italic {
+  font-family: "ff-real-text-pro-2", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* === CSS Variables === */
+:root {
+  --background: #f0f0f0;
+  --foreground: #1c1b1b;
+  --grey: #afafaf;
+}
+
+/* === Base Styles === */
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.black {
+  background-color: var(--foreground);
+}
+
+.grey {
+  background-color: var(--grey);
+}
+
+.white {
+  background-color: var(--background);
+}
+
+/* === Utility Classes === */
 @layer utilities {
   * {
     box-sizing: border-box;
     scroll-behavior: smooth;
   }
+
   .padding-21 {
-    @apply px-[21px]  lg:px-[7vw];
+    @apply px-[21px] lg:px-[7vw];
   }
 
-  /* Spruch/Galerie */
+  .mt-75 {
+    margin-top: 75px;
+  }
+
+  /* Text Styles */
   .quote-gallery-text {
-    font-family: "Real Text Pro", sans-serif;
+    font-family: "ff-real-text-pro", sans-serif;
     font-weight: 300;
     font-style: italic;
     font-size: 22px;
@@ -19,48 +65,22 @@
     text-align: right;
   }
 
-  /* Fließtext*/
   .body-text {
-    font-family: "Real Text Pro", sans-serif;
+    font-family: "ff-real-text-pro", sans-serif;
+    font-weight: 300;
     color: var(--foreground);
-    @apply font-normal not-italic text-sm leading-5 lg:text-lg;
+    @apply not-italic text-sm leading-5 lg:text-lg lg:leading-6;
   }
 
-  /* Bildunterschrift/Kleingedrucktes */
   label {
-    font-family: "Real Text Pro", sans-serif;
-    @apply font-normal text-[10px] leading-5 lg:text-xs;
-  }
-  .mt-75 {
-    margin-top: 75px;
+    font-family: "ff-real-text-pro", sans-serif;
+    @apply font-light text-[10px] leading-5 lg:text-xs;
   }
 }
 
-:root {
-  --background: #f0f0f0;
-  --foreground: #1c1b1b;
-  --grey: #afafaf;
-}
-
-body {
-  color: var(--foreground);
-}
-.black {
-  background-color: var(--foreground);
-}
-.grey {
-  background-color: var(--grey);
-}
-.white {
-  background-color: var(--background);
-}
-body {
-  background: var(--background);
-  color: var(--foreground);
-}
-
+/* === Components === */
 .countdown {
-  font-family: "Real Text Pro", sans-serif;
+  font-family: "ff-real-text-pro", sans-serif;
   color: var(--foreground);
   @apply text-sm lg:text-lg;
 }
@@ -86,12 +106,14 @@ body {
   background: var(--background);
   z-index: 110;
 }
+
 .detail-image {
   height: 436px;
   @apply w-full object-cover;
   background-color: var(--grey);
 }
 
+/* === Form Elements === */
 input,
 select,
 #bild {
@@ -102,61 +124,74 @@ input:hover,
 select:hover,
 #bild:hover {
   @apply border-4 font-semibold;
-  transition: border-width 0.3s ease, border-color 0.3s ease,
-    font-weight 0.3s ease;
+  transition: border-width 0.3s ease, border-color 0.3s ease, font-weight 0.3s ease;
 }
+
 .input-container {
   @apply flex flex-col gap-2 items-center;
 }
+
 ::placeholder {
   @apply text-[#1C1B1B] italic;
 }
+
 #bild,
 .img-preview {
   @apply h-[217px] w-[174px] lg:h-[675px] lg:w-[540px];
 }
+
 .button {
   @apply rounded-full mb-20 text-center h-10 flex justify-center items-center;
 }
+
 .btn-disabled {
   @apply cursor-not-allowed;
   background-color: var(--grey);
   color: var(--background);
 }
 
+/* === Dropdown Menu === */
 ul {
   @apply absolute z-10 w-full h-screen;
   background-color: var(--background);
 }
 
 li {
-  @apply active:bg-[#1C1B1B] active:text-white flex items-center border-b last:border-b-0 cursor-pointer hover:font-semibold hover:border-[#1C1B1B] hover:border-3 ease-in-out transition-all duration-100;
+  @apply active:bg-[#1C1B1B] active:text-white flex items-center border-b last:border-b-0 cursor-pointer hover:font-semibold hover:border-[#1C1B1B] hover:border-3 ease-in-out transition-all duration-100 text-sm lg:text-base;
   min-height: 55px;
-  font-family: "Real Text Pro", sans-serif;
+  font-family: "ff-real-text-pro", sans-serif;
   font-weight: 400;
-  font-size: 14px;
   background-color: var(--background);
   padding: 0px 15px 0px 15px;
 }
+
 .dropdown-button {
   @apply border-[#1C1B1B] border-2 rounded-none p-4 w-full text-left lg:h-[60px] cursor-pointer;
 }
+
 .dropdown-button:hover {
   @apply border-4 font-semibold;
-  transition: border-width 0.3s ease, border-color 0.3s ease,
-    font-weight 0.3s ease;
+  transition: border-width 0.3s ease, border-color 0.3s ease, font-weight 0.3s ease;
 }
+
 select {
   -webkit-appearance: none;
   -moz-appearance: none;
 }
 
-/*hide next toast*/
+/* === Misc === */
 nextjs-portal {
   display: none;
 }
 
-/*checkbox*/
+.cover-container {
+  width: 87px;
+  height: 109px;
+  overflow: hidden;
+  object-fit: cover;
+}
+
+/* === Checkbox Styles === */
 .checkbox-wrapper {
   @apply relative w-6 h-6 cursor-pointer;
 }
@@ -173,13 +208,3 @@ nextjs-portal {
   @apply bg-black;
 }
 
-.checkbox:checked + .checkmark::after {
-  content: "";
-  @apply absolute inset-0 m-auto w-3 h-3 bg-white rounded-full block;
-}
-.cover-container {
-  width: 87px;
-  height: 109px;
-  overflow: hidden;
-  object-fit: cover;
-}

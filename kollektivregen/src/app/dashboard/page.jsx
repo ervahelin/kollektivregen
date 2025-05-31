@@ -131,7 +131,7 @@ const Dashboard = () => {
 
       {/* Zitat und Countdown */}
       <div className="quote">
-        <div className="text-[40px] lg:text-[90px] lg:max-w-8/12">
+        <div className="text-[40px] leading-[46px] lg:leading-[96px] lg:text-[90px] lg:max-w-8/12 real-text-pro-semilight">
         {formattedQuote}
         </div>
         <div className="countdown">{countdown}</div>
