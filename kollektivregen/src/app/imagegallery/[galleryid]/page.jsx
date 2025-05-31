@@ -114,7 +114,7 @@ export default function GalleryDetailPage() {
       <div className="flex flex-row justify-between w-12/12 padding-21 fixed bottom-4 h-20 items-center">
         <div className="flex flex-row gap-2">
           <BackButton/>
-          <Link href="/">
+          <Link href="/dashboard">
             <Image src="/logo.svg" width={60} height={40} alt="logo" className="hover:scale-110 active:scale-110 transition"/>
           </Link>
         </div>
