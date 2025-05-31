@@ -54,7 +54,7 @@ const Dropdown = ({ onSelect }) => {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`dropdown-button transition-colors ${
+        className={`dropdown-button transition-colors italic ${
           selectedText !== placeholder
             ? "bg-black text-white"
             : "bg-transparent text-black"

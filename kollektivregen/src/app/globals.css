@@ -28,22 +28,17 @@
     text-align: right;
   }
 
-  /* Fließtext/Button */
+  /* Fließtext*/
   .body-text {
     font-family: "Real Text Pro", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 14px;
-    line-height: 20px;
     color: var(--foreground);
+    @apply font-normal not-italic text-sm leading-5 lg:text-lg;
   }
 
   /* Bildunterschrift/Kleingedrucktes */
   label {
     font-family: "Real Text Pro", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 10px;
+    @apply font-normal text-[10px] leading-5 lg:text-xs;
   }
   .mt-75 {
     margin-top: 75px;
@@ -52,8 +47,12 @@
 
 :root {
   --background: #f0f0f0;
-  --foreground: #070707;
+  --foreground: #1C1B1B;
   --grey: #afafaf;
+}
+
+body{
+  color: var(--foreground);
 }
 .black{
   background-color: var(--foreground);
@@ -105,15 +104,17 @@ body {
 input,
 select,
 #bild {
-  @apply border-black border-2 rounded-none px-5;
+  @apply border-[#1C1B1B] border-2 rounded-none px-5;
 }
 .input-container {
   @apply flex flex-col gap-2 items-center;
 }
+::placeholder{
+  @apply text-[#1C1B1B] italic;
+}
 #bild,
 .img-preview {
-  height: 217px;
-  width: 174px;
+  @apply h-[217px] w-[174px] lg:h-[675px] lg:w-[540px];
 }
 .button {
   @apply rounded-full mb-20 text-center h-10 flex justify-center items-center;
@@ -139,7 +140,7 @@ li {
   background-color: var(--background)
 }
 .dropdown-button {
-  @apply border-black border-2 rounded-none p-4 w-full text-left;
+  @apply border-black border-2 rounded-none p-4 w-full text-left lg:h-[60px];
 }
 
 /*hide next toast*/

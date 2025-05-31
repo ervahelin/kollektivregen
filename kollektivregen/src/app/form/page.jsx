@@ -4,7 +4,7 @@ import Link from "next/link";
 import BackButton from "../../components/backbutton";
 import CustomSelect from "../../components/dropdown";
 import Image from "next/image";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 
 const Form = () => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
@@ -59,7 +59,7 @@ const Form = () => {
 
       const data = await res.json();
       if (data.success) {
-        router.push("/form/success"); 
+        router.push("/form/success");
       } else {
         alert("Fehler beim Hochladen: " + data.error);
       }
@@ -70,29 +70,16 @@ const Form = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="body-text mt-75">
+    <div className="flex flex-col gap-5 lg:flex-row">
+      <div className="body-text mt-7">
         Lade hier eine Momentaufnahme hoch, die für dich einen Spruch lebendig
         macht, oder teile einfach eine besondere Alltagsimpression.
       </div>
-      <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-        <div className="input-container">
-          <label htmlFor="spruch">Spruch (optional)</label>
-          <CustomSelect onSelect={(id) => setSelectedQuoteId(id)} />
-        </div>
-        <div className="input-container">
-          <label htmlFor="name">Vorname (optional)</label>
-          <input
-            type="text"
-            id="name"
-            placeholder="Name"
-            className={`h-10 w-full transition-colors duration-300 ${nameFilled ? 'bg-black text-white' : 'bg-white text-black'}`}
-            onBlur={(e) => setNameFilled(e.target.value.trim() !== "")}
-          />
-        </div>
+      <form className="flex flex-col gap-5 lg:flex-row" onSubmit={handleSubmit}>
+        {/* Bild*/}
         <div className="input-container">
           <label htmlFor="bild">Bild</label>
-          <div className="relative overflow-hidden h-60 bg-gray-100" id="bild">
+          <div className="relative overflow-hidden h-60" id="bild">
             {imagePreview && (
               <img
                 src={imagePreview}
@@ -102,10 +89,18 @@ const Form = () => {
             )}
             {!imagePreview && (
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-1">
-                <div className="text-2xl font-bold">+</div>
-                <div className="text-sm">max. 10 MB</div>
+                <div className="text-2xl font-bold">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 56.69 56.69"
+                    className="w-6 h-6 fill-black stroke-transparent hover:stroke-black stroke-[2] transition-colors">
+                    <polygon points="56.69 25.03 31.67 25.03 31.67 0 25.03 0 25.03 25.03 0 25.03 0 31.67 25.03 31.67 25.03 56.69 31.67 56.69 31.67 31.67 56.69 31.67 56.69 25.03" />
+                  </svg>
+                </div>
+                <div className="text-sm lg:text-base">max. 10 MB</div>
               </div>
             )}
+
             <input
               type="file"
               id="bild"
@@ -118,38 +113,70 @@ const Form = () => {
             <div className="text-sm text-red-500 mt-1">{imageError}</div>
           )}
         </div>
-        <div className="flex flex-row gap-5 items-center">
-          <label className="checkbox-wrapper">
-            <input
-              type="checkbox"
-              id="checkbox"
-              className="checkbox peer"
-              checked={checkboxChecked}
-              onChange={(e) => setCheckboxChecked(e.target.checked)}
-            />
-            <span className="checkmark"></span>
-          </label>
-          <label htmlFor="checkbox" className="text-sm">
-            Hiermit bestätigen Sie, dass Sie alle erforderlichen Rechte am Bild besitzen und gestatten kollektiv regen das Bild uneingeschränkt in allen Medien zu veröffentlichen, zu bearbeiten und zu verbreiten.
-          </label>
+        {/* Spruch*/}
+        <div className="flex flex-col gap-5 lg:justify-between lg:h-[785px]">
+          <div className="flex flex-col gap-5">
+            <div className="input-container">
+              <label htmlFor="spruch">Spruch (optional)</label>
+              <CustomSelect onSelect={(id) => setSelectedQuoteId(id)} />
+            </div>
+            <div className="input-container">
+              <label htmlFor="name">Vorname (optional)</label>
+              <input
+                type="text"
+                id="name"
+                placeholder="Name"
+                className={`h-10 w-full transition-colors duration-300 ${
+                  nameFilled
+                    ? "bg-black text-white"
+                    : "bg-transparent text-black"
+                }`}
+                onBlur={(e) => setNameFilled(e.target.value.trim() !== "")}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-row gap-5 items-center">
+              <label className="checkbox-wrapper">
+                <input
+                  type="checkbox"
+                  id="checkbox"
+                  className="checkbox peer"
+                  checked={checkboxChecked}
+                  onChange={(e) => setCheckboxChecked(e.target.checked)}
+                />
+                <span className="checkmark"></span>
+              </label>
+              <label htmlFor="checkbox" className="text-sm">
+                Hiermit bestätigen Sie, dass Sie alle erforderlichen Rechte am
+                Bild besitzen und gestatten kollektiv regen das Bild
+                uneingeschränkt in allen Medien zu veröffentlichen, zu
+                bearbeiten und zu verbreiten.
+              </label>
+            </div>
+            <button
+              type="submit"
+              className={`button ${
+                isFormValid ? "bg-black text-white" : "btn-disabled"
+              }`}
+              disabled={!isFormValid}>
+              einsenden
+            </button>
+          </div>
         </div>
-        <button
-          type="submit"
-          className={`button ${
-            isFormValid
-              ? "bg-black text-white"
-              : "btn-disabled"
-          }`}
-          disabled={!isFormValid}
-        >
-          einsenden
-        </button>
       </form>
       <div className="navigation">
         <div className="flex flex-row gap-5">
           <BackButton />
           <Link href="/dashboard">
-            <Image src="/logo.svg" alt="Logo" height={40} width={60} className="hover:scale-110 active:scale-110 transition"/>
+            <Image
+              src="/logo.svg"
+              alt="Logo"
+              height={40}
+              width={60}
+              className="hover:scale-110 active:scale-110 transition"
+            />
           </Link>
         </div>
       </div>
