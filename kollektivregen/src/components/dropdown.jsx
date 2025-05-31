@@ -1,60 +1,81 @@
-// components/dropdown.js
-import { useEffect, useState } from 'react';
+"use client";
+import { useState, useRef, useEffect } from "react";
 
-const CustomSelect = ({ onSelect }) => {
-  const [quotes, setQuotes] = useState([]); // Zustand für die Zitate
-  const [selectedQuote, setSelectedQuote] = useState(); // Das ausgewählte Zitat
-  const [currentWeek, setCurrentWeek] = useState(0); // Woche für das Zitat-Management
+const Dropdown = ({ onSelect }) => {
+  const placeholder = "Spruch auswählen";
+  const [selectedText, setSelectedText] = useState(placeholder);
+  const [quotes, setQuotes] = useState([]);
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
-    // API aufrufen, um die Zitate zu laden
     const fetchQuotes = async () => {
       try {
-        const response = await fetch('/api/quotes');
-        const data = await response.json();
-        setQuotes(data);
-      } catch (error) {
-        console.error('Fehler beim Abrufen der Zitate:', error);
+        const res = await fetch("/api/quotes");
+        const data = await res.json();
+  
+        const startDate = new Date("2025-05-03"); // Start Datum fest eintragen
+        const today = new Date();
+  
+        const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+        const weeksSinceStart = Math.floor((today - startDate) / msPerWeek);
+  
+        const visibleQuotes = data.slice(0, weeksSinceStart + 1);
+  
+        setQuotes([{ id: null, text: "Ohne Spruch" }, ...visibleQuotes]);
+      } catch (err) {
+        console.error("Fehler beim Laden der Zitate:", err);
+      }
+    };
+  
+    fetchQuotes();
+  }, []);
+  
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
       }
     };
 
-    fetchQuotes();
-
-    // Berechne die aktuelle Woche basierend auf dem aktuellen Datum
-    const startDate = new Date('2025-05-09'); // Setze das Startdatum (z.B. heute)
-    const currentDate = new Date();
-    const diffInWeeks = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24 * 7)); // Wochen seit dem Startdatum
-    setCurrentWeek(diffInWeeks);
-
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleChange = (e) => {
-    const selectedQuoteId = e.target.value;
-    setSelectedQuote(selectedQuoteId);
-    onSelect(selectedQuoteId); // Übergibt den Wert an das übergeordnete Formular
+  const handleSelect = (quote) => {
+    setSelectedText(quote.text);
+    setOpen(false);
+    onSelect(quote.id);
   };
 
   return (
-    <div className="relative w-full">
-      <select
-        id="quote-dropdown"
-        value={selectedQuote}
-        onChange={handleChange}
-        className={`dropdown-button transition-colors italic w-full mt-1 ${
-          selectedQuote !== null ? "bg-black text-white" : "bg-transparent text-black"
-        }`}
-      >
-        <option value={null} className="text-black">
-          Kein Zitat
-        </option>
-        {quotes.slice(0, currentWeek + 1).map((quote) => (
-          <option key={quote.id} value={quote.id} className="text-black">
-            {quote.text}  {/* Nur das text-Feld anzeigen */}
-          </option>
-        ))}
-      </select>
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className={`dropdown-button transition-colors ${
+          selectedText !== placeholder
+            ? "bg-black text-white"
+            : "bg-transparent text-black"
+        }`}>
+        {selectedText}
+      </button>
+
+      {open && (
+        <ul className="absolute z-50 bg-white mt-1 w-full">
+          {quotes.map((quote) => (
+            <li
+              key={quote.id || "none"}
+              onClick={() => handleSelect(quote)}
+              className="cursor-pointer">
+              {quote.text}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
 
-export default CustomSelect;
+export default Dropdown;
