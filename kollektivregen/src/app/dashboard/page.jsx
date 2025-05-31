@@ -13,6 +13,8 @@ const Dashboard = () => {
   const [quotes, setQuotes] = useState([]);
   const [currentWeek, setCurrentWeek] = useState(0);
   const [coverImages, setCoverImages] = useState({});
+  const [formattedQuote, setFormattedQuote] = useState(null);
+
   useEffect(() => {
     async function fetchGalleries() {
       try {
@@ -55,9 +57,9 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    // Berechne das Zitat für diese Woche
     const currentQuote = quotes[currentWeek % quotes.length];
     setQuote(currentQuote);
+    setFormattedQuote(renderItalicizedQuote(currentQuote?.text || ""));
 
     // Countdown bis zum nächsten Zitat
     const updateCountdown = () => {
@@ -89,6 +91,27 @@ const Dashboard = () => {
     endOfWeek.setHours(23, 59, 59, 999);
     return endOfWeek;
   };
+  const renderItalicizedQuote = (text) => {
+    if (!text) return null;
+  
+    const letters = text.split("");
+    const letterIndices = letters
+      .map((char, i) => (/[a-zA-Z]/.test(char) ? i : null))
+      .filter((i) => i !== null);
+  
+    const numToItalicize = Math.floor(letterIndices.length * 0.2);
+    const italicIndices = new Set();
+  
+    while (italicIndices.size < numToItalicize) {
+      const randomIndex = letterIndices[Math.floor(Math.random() * letterIndices.length)];
+      italicIndices.add(randomIndex);
+    }
+  
+    return letters.map((char, i) =>
+      italicIndices.has(i) ? <i key={i}>{char}</i> : <span key={i}>{char}</span>
+    );
+  };
+  
 
   if (!quote) return <div className="padding-21 flex items-center justify-center h-screen"> <FadeLoader color="#1C1B1B" /></div>;
 
@@ -109,7 +132,7 @@ const Dashboard = () => {
       {/* Zitat und Countdown */}
       <div className="quote">
         <div className="text-[40px] lg:text-[90px] lg:max-w-8/12">
-          {quote.text}
+        {formattedQuote}
         </div>
         <div className="countdown">{countdown}</div>
       </div>
