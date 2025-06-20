@@ -132,11 +132,7 @@ const handleSubmit = useCallback(
                 <div className="text-sm lg:text-base">max. 10 MB</div>
               </div>
             )}
-            {loading && (
-              <div className="absolute inset-0 flex items-center justify-center text-xl font-bold z-10 bg-grey-200 h-[70vh]">
-                <FadeLoader color="#1C1B1B" />
-              </div>
-            )}
+          
             <input
               ref={fileInputRef} 
               type="file"
@@ -196,7 +192,7 @@ const handleSubmit = useCallback(
             </div>
             <button
               type="submit"
-              className={`button ${
+              className={`button active:bg-[#afafaf] ${
                 isFormValid
                   ? "bg-black text-white cursor-pointer"
                   : "btn-disabled cursor-not-allowed"
@@ -222,6 +218,13 @@ const handleSubmit = useCallback(
           </Link>
         </div>
       </div>
+      {loading && (
+        <div className="fixed inset-0 z-[9999] bg-white/70 backdrop-blur flex items-center justify-center">
+          <FadeLoader color="#1C1B1B" />
+        </div>
+      )}
+
+
     </div>
   );
 };
