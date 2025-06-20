@@ -169,7 +169,7 @@ const positionsMobile = [
 const positionsDesktop = [
   "lg:col-start-1 lg:row-start-1",          
   "lg:col-start-4 lg:row-start-1",  
-  "lg:col-start-6 lg:row-start-1",         
+  "lg:col-start-6 lg:row-start-1 lg:-translate-y-0",         
   "lg:col-start-2 lg:row-start-2 lg:-translate-y-1/2",  
   "lg:col-start-3 lg:row-start-3 lg:-translate-y-[100%]",  
   "lg:col-start-5 lg:row-start-3 lg:-translate-y-[100%]", 
@@ -212,7 +212,7 @@ const positionsDesktop = [
 
       {/* Galerie */}
       <div className="cover-grid flex flex-col bottom-0 z-10">
-      <div className="grid grid-cols-4 lg:grid-cols-6 w-full padding-21 auto-rows-[109px] lg:auto-rows-[450px]">
+      <div className="grid grid-cols-4 lg:grid-cols-6 w-full padding-21 auto-rows-[109px] lg:auto-rows-[340px]">
         {galleries.slice(0, visibleCount).map((gallery, index) => {
         const coverUrl = coverImages[gallery.id] || "/placeholder.png";
         const positionClass = `${positionsMobile[index % positionsMobile.length]} ${positionsDesktop[index % positionsDesktop.length]}`;

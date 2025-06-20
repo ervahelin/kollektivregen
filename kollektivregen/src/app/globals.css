@@ -144,7 +144,7 @@ select:hover,
 
 #bild,
 .img-preview {
-  @apply h-[217px] w-[174px] lg:h-[675px] lg:w-[540px];
+  @apply h-[217px] w-[174px] lg:h-[70vh] lg:w-[540px];
 }
 
 .button {

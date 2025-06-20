@@ -100,9 +100,9 @@ const handleSubmit = useCallback(
 );
 
   return (
-    <div>
+    <div className="h-screen">
       <form
-        className="flex flex-col gap-5 lg:flex-row lg:justify-between w-full"
+        className="flex flex-col gap-5 h-full lg:flex-row lg:justify-between w-full"
         onSubmit={handleSubmit}>
         {/* Bild */}
         <div className="body-text mt-7 lg:w-[20vw]">
@@ -133,7 +133,7 @@ const handleSubmit = useCallback(
               </div>
             )}
             {loading && (
-              <div className="absolute inset-0 flex items-center justify-center text-xl font-bold z-10 bg-grey-200 h-screen">
+              <div className="absolute inset-0 flex items-center justify-center text-xl font-bold z-10 bg-grey-200 h-[70vh]">
                 <FadeLoader color="#1C1B1B" />
               </div>
             )}
@@ -153,7 +153,7 @@ const handleSubmit = useCallback(
         </div>
 
         {/* Spruch */}
-        <div className="flex flex-col gap-5 lg:justify-between lg:h-[785px] lg:w-[20vw]">
+        <div className="flex flex-col gap-5 lg:justify-between lg:h-[80vh] lg:w-[20vw]">
           <div className="flex flex-col gap-5">
             <div className="input-container">
               <label htmlFor="spruch">Spruch (optional)</label>

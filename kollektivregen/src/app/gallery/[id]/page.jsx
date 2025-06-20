@@ -53,7 +53,7 @@ const GalleryPage = () => {
   }
 
   return (
-    <div className="mx-auto flex flex-col justify-center h-screen -mt-16">
+    <div className="mx-auto flex flex-col justify-center h-screen -mt-4 lg:mt-0">
       <div className="padding-21 flex flex-col lg:flex-row">
         {/* Zitat */}
         <div className="lg:w-3/12">
@@ -85,7 +85,7 @@ const GalleryPage = () => {
               </button>
               <div
                 {...handlers}
-                className="w-[540px] h-[670px] bg-amber-50  relative overflow-hidden"
+                className="w-[100vw] h-[55vh] lg:w-[540px] lg:h-[670px] bg-amber-50  relative overflow-hidden"
               >
                 {/* Image Slider */}
                 <Image
@@ -115,7 +115,12 @@ const GalleryPage = () => {
             <div className="text-center">
               {uploads[currentIndex].name && (
                 <p className="body-text">
-                  {uploads[currentIndex].name} | {uploads[currentIndex].date}
+                   {uploads[currentIndex].name} |{" "}
+                    {new Date(uploads[currentIndex].createdAt).toLocaleDateString("de-DE", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
                 </p>
               )}
             </div>
