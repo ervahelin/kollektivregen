@@ -2,10 +2,7 @@
 const nextConfig = {
   images: {
     domains: ['imagedelivery.net'], 
-  },
-  experimental: {
-    devIndicators: false,
-  },
+  }
 };
 
 module.exports = nextConfig;
