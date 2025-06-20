@@ -17,7 +17,7 @@ const Dashboard = () => {
   const [formattedQuote, setFormattedQuote] = useState(null);
   const [animate, setAnimate] = useState(false);
   const [hoveredId, setHoveredId] = useState(null);
-
+  const [visibleCount, setVisibleCount] = useState(12);
 
   useEffect(() => {
     setAnimate(true);
@@ -155,16 +155,28 @@ const Dashboard = () => {
   };
 
   // Positionierungen
-const positions = [
+const positionsMobile = [
   "col-start-1 row-start-1",          
   "col-start-4 row-start-1",  
-  "col-start-6 row-start-1",         
-  "col-start-2 row-start-2 -translate-y-1/2",  
+  "col-start-2 row-start-2 -translate-y-[50%]",         
   "col-start-3 row-start-3 -translate-y-[100%]",  
-  "col-start-5 row-start-3 -translate-y-[100%]", 
-  "col-start-1 row-start-4 -translate-y-[100%]",         
-  "col-start-6 row-start-4 -translate-y-[100%]",          
+  "col-start-1 row-start-4 -translate-y-[150%]",         
+  "col-start-4 row-start-4 -translate-y-[150%]",     
+  "col-start-3 row-start-5 -translate-y-[150%]", 
+  "col-start-2 row-start-6 -translate-y-[200%]",
 ];
+
+const positionsDesktop = [
+  "lg:col-start-1 lg:row-start-1",          
+  "lg:col-start-4 lg:row-start-1",  
+  "lg:col-start-6 lg:row-start-1",         
+  "lg:col-start-2 lg:row-start-2 lg:-translate-y-1/2",  
+  "lg:col-start-3 lg:row-start-3 lg:-translate-y-[100%]",  
+  "lg:col-start-5 lg:row-start-3 lg:-translate-y-[100%]", 
+  "lg:col-start-1 lg:row-start-4 lg:-translate-y-[150%]",         
+  "lg:col-start-6 lg:row-start-4 lg:-translate-y-[150%]",          
+];
+
 
   if (!quote)
     return (
@@ -172,6 +184,12 @@ const positions = [
         <FadeLoader color="#1C1B1B" />
       </div>
     );
+
+  // load more button
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 3);
+  };
+
 
   return (
     <div className={`h-screen relative ${animate ? "fade-slide-in" : ""}`}>
@@ -193,11 +211,11 @@ const positions = [
       </div>
 
       {/* Galerie */}
-      <div className="cover-grid grid grid-cols-6 w-full padding-21 auto-rows-[450px]">
-        {galleries.map((gallery, index) => {
+      <div className="cover-grid flex flex-col bottom-0 z-10">
+      <div className="grid grid-cols-4 lg:grid-cols-6 w-full padding-21 auto-rows-[109px] lg:auto-rows-[450px]">
+        {galleries.slice(0, visibleCount).map((gallery, index) => {
         const coverUrl = coverImages[gallery.id] || "/placeholder.png";
-        const positionClass = positions[index % positions.length];
-
+        const positionClass = `${positionsMobile[index % positionsMobile.length]} ${positionsDesktop[index % positionsDesktop.length]}`;
         const isHovered = hoveredId === null || hoveredId === gallery.id;
 
         return (
@@ -224,8 +242,20 @@ const positions = [
             </div>
           </Link>
         );
+        
         })}
-
+      
+      </div>
+      {visibleCount < galleries.length && (
+          <div className="w-full flex justify-end mt-8 padding-21">
+            <button
+              onClick={handleLoadMore}
+              className="underline text-[#AFAFAF] cursor-pointer transition lg:text-xl"
+            >
+              mehr laden
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
