@@ -1,72 +1,92 @@
-import { NextResponse } from "next/server";
-import { MongoClient, ObjectId } from "mongodb";
+import { PrismaClient } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
-const dbName = "kollektivregen";
+const prisma = new PrismaClient();
 
 export async function POST(req) {
   try {
-    await client.connect();
-    const db = client.db(dbName);
+    const formData = await req.formData();
+    const quoteid = formData.get("quoteid") || "speziell";
+    const name = formData.get("name");
+    const checkbox = formData.get("checkbox") === "true";
+    const file = formData.get("image");
 
-    const uploadsCollection = db.collection("form_uploads");
-    const galleryCollection = db.collection("gallery");
-
-    const body = await req.json();
-
-    
-    const { name, url, quoteid, checkbox } = body;
-
-    const parsedQuoteId = ObjectId.createFromHexString(quoteid)
-    
-    // Step 1: Upload speichern
-    const uploadDoc = {
-      name,
-      url,
-      checkbox,
-      quoteid: parsedQuoteId,
-      createdAt: new Date()
-    };
-
-    const result = await uploadsCollection.insertOne(uploadDoc);
-
-    // Step 2: Upload-Eintrag vorbereiten
-    const uploadEntry = {
-      uploadId: result.insertedId,
-      name,
-      url
-    };
-
-    // Step 3: Galerie suchen oder erstellen, auch wenn quoteid null ist
-    const obj = await galleryCollection.find()
-    console.warn(obj)
-    console.warn(parsedQuoteId)
-    
-    const existingGallery = await galleryCollection.findOne({ 
-      quoteid: quoteid ? parsedQuoteId : null
-    });
-
-    if (existingGallery) {
-      // Galerie mit passender `quoteid` gefunden, füge den Upload hinzu
-      await galleryCollection.updateOne(
-        { _id: existingGallery._id },
-        { $push: { uploads: uploadEntry } }
+    // Validation
+    if ( !file || typeof file !== "object") {
+      return new Response(
+        JSON.stringify({ success: false, error: "Missing or invalid data." }),
+        { status: 400 }
       );
-    } else {
-      // Keine Galerie gefunden, erstelle eine neue Galerie
-      const newGallery = {
-        quoteid: parsedQuoteId, // das kann auch null sein!
-        uploads: [uploadEntry]
-      };
-      await galleryCollection.insertOne(newGallery);
     }
 
-    return NextResponse.json({ success: true });
+    // Prepare form data for Cloudflare
+    const uploadForm = new FormData();
+    uploadForm.set("file", file);
+    uploadForm.set("id", `upload-${uuidv4()}`);
+
+    const uploadRes = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/images/v1`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+        },
+        body: uploadForm,
+      }
+    );
+
+    const uploadData = await uploadRes.json();
+
+    if (!uploadData.success) {
+      console.error("Cloudflare upload failed:", uploadData);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Upload zu Cloudflare fehlgeschlagen.",
+        }),
+        { status: 500 }
+      );
+    }
+
+    const cloudflareUrl = uploadData.result.variants[0];
+
+    // Save form upload
+    const formUpload = await prisma.formUpload.create({
+      data: {
+        quoteId: quoteid || "speziell",
+        name: name || "",
+        url: cloudflareUrl,
+        checkbox,
+      },
+    });
+
+    // Check for existing gallery
+    let gallery = await prisma.gallery.findFirst({
+      where: { quoteId: quoteid },
+    });
+
+    if (!gallery) {
+      gallery = await prisma.gallery.create({
+        data: { quoteId: quoteid },
+      });
+    }
+
+    // Save upload entry to gallery
+    await prisma.uploadEntry.create({
+      data: {
+        galleryId: gallery.id,
+        uploadId: formUpload.id,
+        name: formUpload.name,
+        url: formUpload.url,
+      },
+    });
+
+    return new Response(JSON.stringify({ success: true }), { status: 200 });
   } catch (error) {
     console.error("Fehler beim Upload:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  } finally {
-    await client.close();
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      { status: 500 }
+    );
   }
 }

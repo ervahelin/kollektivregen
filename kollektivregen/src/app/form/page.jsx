@@ -1,22 +1,25 @@
+// form/page.js
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import BackButton from "../../components/backbutton";
 import CustomSelect from "../../components/dropdown";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import imageCompression from "browser-image-compression";
+import { FadeLoader } from "react-spinners";
 
 const Form = () => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageError, setImageError] = useState(null);
-  const [selectedQuoteId, setSelectedQuoteId] = useState(null);
+  const [selectedQuoteId, setSelectedQuoteId] = useState(null);  // Zustand für das ausgewählte Zitat
   const [nameFilled, setNameFilled] = useState(false);
   const [loading, setLoading] = useState(false); // State für den Ladeindikator
   const router = useRouter();
+  const fileInputRef = useRef(null); 
 
-  const isFormValid = checkboxChecked && imagePreview;
+  const isFormValid = (checkboxChecked && imagePreview);
 
   const handleImageUpload = useCallback(async (e) => {
     const file = e.target.files[0];
@@ -55,48 +58,51 @@ const Form = () => {
     }
   }, []);
 
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-      setLoading(true); // Ladeindikator aktivieren
-      const name = e.target.name.value;
+const handleSubmit = useCallback(
+  async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-      const payload = {
-        quoteid: selectedQuoteId,
-        name: name || null,
-        url: "https://example.com/test.jpg",
-        checkbox: checkboxChecked,
-      };
-      console.log("Payload:", payload);
-      try {
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
+    const name = e.target.name.value;
+    const file = fileInputRef.current?.files?.[0];
 
-        const data = await res.json();
-        if (data.success) {
-          router.push("/form/success");
-        } else {
-          alert("Fehler beim Hochladen: " + data.error);
-        }
-      } catch (err) {
-        console.error("Fehler:", err);
-        alert("Netzwerkfehler.");
-      } finally {
-        setLoading(false); // Ladeindikator deaktivieren
+    if (!file) {
+      setLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("quoteid", selectedQuoteId || "speziell");
+    formData.append("name", name || "");
+    formData.append("checkbox", checkboxChecked.toString());
+    formData.append("image", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        router.push("/form/success");
+      } else {
+        alert("Fehler beim Hochladen: " + data.error);
       }
-    },
-    [imagePreview, checkboxChecked, selectedQuoteId, router]
-  );
+    } catch (err) {
+      console.error("Fehler:", err);
+      alert("Netzwerkfehler.");
+    } finally {
+      setLoading(false);
+    }
+  },
+  [checkboxChecked, selectedQuoteId, router]
+);
 
   return (
-    <div>
+    <div className="h-screen">
       <form
-        className="flex flex-col gap-5 lg:flex-row lg:justify-between w-full"
+        className="flex flex-col gap-5 h-full lg:flex-row lg:justify-between w-full"
         onSubmit={handleSubmit}>
         {/* Bild */}
         <div className="body-text mt-7 lg:w-[20vw]">
@@ -127,16 +133,18 @@ const Form = () => {
               </div>
             )}
             {loading && (
-              <div className="absolute inset-0 flex items-center justify-center text-xl font-bold">
-                Lade...
+              <div className="absolute inset-0 flex items-center justify-center text-xl font-bold z-10 bg-grey-200 h-[70vh]">
+                <FadeLoader color="#1C1B1B" />
               </div>
             )}
             <input
+              ref={fileInputRef} 
               type="file"
               id="bild"
               accept="image/*"
               className="absolute inset-0 opacity-0 cursor-pointer z-10"
               onChange={handleImageUpload}
+              required
             />
           </div>
           {imageError && (
@@ -145,18 +153,18 @@ const Form = () => {
         </div>
 
         {/* Spruch */}
-        <div className="flex flex-col gap-5 lg:justify-between lg:h-[785px] lg:w-[20vw]">
+        <div className="flex flex-col gap-5 lg:justify-between lg:h-[80vh] lg:w-[20vw]">
           <div className="flex flex-col gap-5">
             <div className="input-container">
               <label htmlFor="spruch">Spruch (optional)</label>
-              <CustomSelect onSelect={(id) => setSelectedQuoteId(id)} />
+              <CustomSelect onSelect={setSelectedQuoteId} /> {/* übergebe den ausgewählten quoteid */}
             </div>
             <div className="input-container">
               <label htmlFor="name">Vorname (optional)</label>
               <input
                 type="text"
                 id="name"
-                placeholder="Name"
+                placeholder="Anonym"
                 className={`h-10 w-full transition-colors duration-300 ${
                   nameFilled
                     ? "bg-black text-white"
@@ -201,7 +209,7 @@ const Form = () => {
       </form>
 
       <div className="navigation">
-        <div className="flex flex-row gap-5 lg:gap-10 justify-center">
+        <div className="flex flex-row gap-5 lg:gap-14 justify-center">
           <BackButton />
           <Link href="/dashboard">
             <Image

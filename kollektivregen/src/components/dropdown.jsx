@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 
 const Dropdown = ({ onSelect }) => {
-  const placeholder = "Spruch auswählen";
+  const placeholder = "Ohne Spruch";
   const [selectedText, setSelectedText] = useState(placeholder);
   const [quotes, setQuotes] = useState([]);
   const [open, setOpen] = useState(false);
@@ -13,23 +13,24 @@ const Dropdown = ({ onSelect }) => {
       try {
         const res = await fetch("/api/quotes");
         const data = await res.json();
-
+  
         const startDate = new Date("2025-05-03"); // Start Datum fest eintragen
         const today = new Date();
-
+  
         const msPerWeek = 7 * 24 * 60 * 60 * 1000;
         const weeksSinceStart = Math.floor((today - startDate) / msPerWeek);
-
+  
         const visibleQuotes = data.slice(0, weeksSinceStart + 1);
-
-        setQuotes([{ _id: null, text: "Ohne Spruch" }, ...visibleQuotes]);
+  
+        setQuotes([ ...visibleQuotes]);
       } catch (err) {
         console.error("Fehler beim Laden der Zitate:", err);
       }
     };
-
+  
     fetchQuotes();
   }, []);
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -45,7 +46,7 @@ const Dropdown = ({ onSelect }) => {
   const handleSelect = (quote) => {
     setSelectedText(quote.text);
     setOpen(false);
-    onSelect(quote._id);
+    onSelect(quote.id);
   };
 
   return (
@@ -53,7 +54,7 @@ const Dropdown = ({ onSelect }) => {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`dropdown-button transition-colors italic ${
+        className={`dropdown-button transition-colors ${
           selectedText !== placeholder
             ? "bg-black text-white"
             : "bg-transparent text-black"
@@ -62,12 +63,12 @@ const Dropdown = ({ onSelect }) => {
       </button>
 
       {open && (
-        <ul className="absolute z-50 bg-white mt-1 w-full overflow-y-auto">
+        <ul className="absolute z-50 bg-white mt-1 w-full">
           {quotes.map((quote) => (
             <li
-              key={quote._id || "none"}
+              key={quote.id || "none"}
               onClick={() => handleSelect(quote)}
-              className="cursor-pointer py-2">
+              className="cursor-pointer">
               {quote.text}
             </li>
           ))}
