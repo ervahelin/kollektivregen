@@ -17,7 +17,7 @@ const Dashboard = () => {
   const [formattedQuote, setFormattedQuote] = useState(null);
   const [animate, setAnimate] = useState(false);
   const [hoveredId, setHoveredId] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(12);
 
   useEffect(() => {
     setAnimate(true);
@@ -169,7 +169,7 @@ const positionsMobile = [
 const positionsDesktop = [
   "lg:col-start-1 lg:row-start-1",          
   "lg:col-start-4 lg:row-start-1",  
-  "lg:col-start-6 lg:row-start-1 translate-y-[0%]",         
+  "lg:col-start-6 lg:row-start-1",         
   "lg:col-start-2 lg:row-start-2 lg:-translate-y-1/2",  
   "lg:col-start-3 lg:row-start-3 lg:-translate-y-[100%]",  
   "lg:col-start-5 lg:row-start-3 lg:-translate-y-[100%]", 
