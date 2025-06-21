@@ -88,13 +88,12 @@ body {
 }
 
 .cover {
-  @apply object-cover h-[109px] w-[87px] lg:h-[338px] lg:w-[270px] hover:scale-110 transition-transform duration-200 ease-in-out;
+  @apply object-cover w-full h-[450px] lg:h-[338px] lg:w-[270px] hover:scale-110 transition-all duration-400 ease-in-out;
 }
 
 .cover-grid {
-  @apply absolute top-5/6 w-full pb-[209px] ;
+  @apply absolute top-5/6 w-full pb-[209px] min-h-[50vh] lg:min-h-[60vh] ;
   z-index: 100;
-  height: 800px;
   background: linear-gradient(to top, #f0f0f0 90%, transparent 100%);
 }
 
@@ -174,7 +173,7 @@ li {
 }
 
 .dropdown-button {
-  @apply border-[#1C1B1B] border-2 rounded-none p-4 w-full text-left lg:h-[60px] cursor-pointer;
+  @apply border-[#1C1B1B] border-2 rounded-none p-4 w-full text-left lg:min-h-[60px] cursor-pointer;
 }
 
 .dropdown-button:hover {
@@ -192,12 +191,12 @@ nextjs-portal {
   display: none;
 }
 
-.cover-container {
+/*.cover-container {
   width: 87px;
   height: 109px;
   overflow: hidden;
   object-fit: cover;
-}
+}*/
 
 /* === Checkbox Styles === */
 .checkbox-wrapper {
