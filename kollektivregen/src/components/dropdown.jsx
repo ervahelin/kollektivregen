@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 
 const Dropdown = ({ onSelect }) => {
-  const placeholder = "Spruch auswählen";
+  const placeholder = "Ohne Spruch";
   const [selectedText, setSelectedText] = useState(placeholder);
   const [quotes, setQuotes] = useState([]);
   const [open, setOpen] = useState(false);
@@ -22,7 +22,7 @@ const Dropdown = ({ onSelect }) => {
   
         const visibleQuotes = data.slice(0, weeksSinceStart + 1);
   
-        setQuotes([{ id: "speziell", text: "Ohne Spruch" }, ...visibleQuotes]);
+        setQuotes([ ...visibleQuotes]);
       } catch (err) {
         console.error("Fehler beim Laden der Zitate:", err);
       }

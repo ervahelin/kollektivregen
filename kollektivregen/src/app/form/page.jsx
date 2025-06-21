@@ -164,7 +164,7 @@ const handleSubmit = useCallback(
               <input
                 type="text"
                 id="name"
-                placeholder="Name"
+                placeholder="Anonym"
                 className={`h-10 w-full transition-colors duration-300 ${
                   nameFilled
                     ? "bg-black text-white"
