@@ -1,16 +1,15 @@
 /* === Imports === */
 @import "tailwindcss";
-@import url("https://use.typekit.net/vrt6azc.css");
 
 /* === Fonts === */
 .real-text-pro-semilight {
-  font-family: "ff-real-text-pro-2", sans-serif;
+  font-family: "ff-real-headline-pro-2", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
 .real-text-pro-semilight-italic {
-  font-family: "ff-real-text-pro-2", sans-serif;
+  font-family: "ff-real-headline-pro-2", sans-serif;
   font-weight: 400;
   font-style: italic;
 }
@@ -22,12 +21,23 @@
   --grey: #afafaf;
   --quote-opacity: 1;
   --quote-blur: 0px;
+  --intro-opacity: 0;
+}
+
+.intro-fade {
+  opacity: var(--intro-opacity);
+  transition: opacity 0.3s ease;
 }
 
 /* === Base Styles === */
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: ff-real-headline-pro, sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  color: var(--foreground);
+  @apply not-italic text-sm leading-5 lg:text-lg lg:leading-6;
 }
 
 .black {
@@ -59,7 +69,7 @@ body {
 
   /* Text Styles */
   .quote-gallery-text {
-    font-family: "ff-real-text-pro", sans-serif;
+    font-family: ff-real-headline-pro, sans-serif;
     font-weight: 300;
     font-style: italic;
     font-size: 22px;
@@ -68,23 +78,24 @@ body {
   }
 
   .body-text {
-    font-family: "ff-real-text-pro", sans-serif;
+    font-family: ff-real-headline-pro, sans-serif;
     font-weight: 300;
     color: var(--foreground);
     @apply not-italic text-sm leading-5 lg:text-lg lg:leading-6;
   }
 
   label {
-    font-family: "ff-real-text-pro", sans-serif;
+    font-family: ff-real-headline-pro, sans-serif;
     @apply font-light text-[10px] leading-5 lg:text-xs;
   }
 }
 
 /* === Components === */
 .countdown {
-  font-family: "ff-real-text-pro", sans-serif;
+  font-family: ff-real-headline-pro, sans-serif;
+  font-weight: 400;
   color: var(--foreground);
-  @apply text-sm lg:text-lg;
+  @apply text-sm lg:text-lg text-center;
 }
 
 .cover {
@@ -92,19 +103,19 @@ body {
 }
 
 .cover-grid {
-  @apply absolute top-5/6 w-full pb-[209px] min-h-[50vh] lg:min-h-[60vh] ;
+  @apply absolute top-10/12 lg:top-9/12 w-full pb-[209px] min-h-[50vh] lg:min-h-[60vh] ;
   z-index: 100;
   background: linear-gradient(to top, #f0f0f0 90%, transparent 100%);
 }
 
 .quote-fx {
   opacity: var(--quote-opacity);
-  filter: blur(var(--quote-blur));
-  transition: opacity 0.3s ease-out, filter 0.3s ease-out;
+  transition: opacity 0.3s ease-out;
 }
 
+
 .quote {
-  @apply flex flex-col gap-2 justify-center lg:items-center pr-5 z-30 fixed top-1/2 transform -translate-y-1/2 w-full h-[300px];
+  @apply flex flex-col gap-2 justify-center lg:items-center pr-5 z-30 fixed top-1/2 pb-16 lg:pb-[120px] transform -translate-y-1/2 w-full;
   background: var(--background);
 }
 
@@ -166,7 +177,7 @@ ul {
 li {
   @apply active:bg-[#1C1B1B] active:text-white flex items-center border-b last:border-b-0 cursor-pointer hover:font-semibold hover:border-[#1C1B1B] hover:border-3 ease-in-out transition-all duration-100 text-sm lg:text-base;
   min-height: 55px;
-  font-family: "ff-real-text-pro", sans-serif;
+  font-family: "ff-real-headline-pro", sans-serif;
   font-weight: 400;
   background-color: var(--background);
   padding: 0px 15px 0px 15px;

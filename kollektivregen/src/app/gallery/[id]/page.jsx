@@ -112,17 +112,17 @@ const GalleryPage = () => {
             </div>
 
             {/* Bildbeschreibung */}
-            <div className="text-center">
-              {uploads[currentIndex].name && (
+            <div className="text-center min-h-[1.5rem]">
+              
                 <p className="body-text">
-                   {uploads[currentIndex].name} |{" "}
+                   {uploads[currentIndex].name ? uploads[currentIndex].name : "Anonym"} |{" "}
                     {new Date(uploads[currentIndex].createdAt).toLocaleDateString("de-DE", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
                     })}
                 </p>
-              )}
+            
             </div>
 
             {/* Dots */}
@@ -144,7 +144,7 @@ const GalleryPage = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="flex flex-row justify-between w-12/12 padding-21 fixed bottom-4 h-20 items-center">
+      <div className="flex flex-row justify-between w-12/12 padding-21 fixed bottom-4 items-center">
         <div className="flex flex-row gap-2 lg:gap-14">
           <BackButton/>
           <Link href="/dashboard">

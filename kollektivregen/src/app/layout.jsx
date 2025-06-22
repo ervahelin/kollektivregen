@@ -1,20 +1,16 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+'use client';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import './globals.css';
+import { usePathname } from 'next/navigation';
 
 export default function RootLayout({ children }) {
+  const pathname = usePathname();
+  const isGallery = pathname.startsWith('/gallery');
   return (
     <html lang="de">
-      <body>{children}</body>
+      <body className={isGallery ? 'overflow-hidden' : ''}>
+        {children}
+      </body>
     </html>
   );
 }

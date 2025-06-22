@@ -129,7 +129,7 @@ const handleSubmit = useCallback(
                     <polygon points="56.69 25.03 31.67 25.03 31.67 0 25.03 0 25.03 25.03 0 25.03 0 31.67 25.03 31.67 25.03 56.69 31.67 56.69 31.67 31.67 56.69 31.67 56.69 25.03" />
                   </svg>
                 </div>
-                <div className="text-sm lg:text-base">max. 10 MB</div>
+                <div className="text-sm lg:text-base">max. 5 MB</div>
               </div>
             )}
           

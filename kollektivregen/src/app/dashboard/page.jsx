@@ -17,7 +17,7 @@ const Dashboard = () => {
   const [formattedQuote, setFormattedQuote] = useState(null);
   const [animate, setAnimate] = useState(false);
   const [hoveredId, setHoveredId] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(12);
+  const [visibleCount, setVisibleCount] = useState(3);
 
   useEffect(() => {
     setAnimate(true);
@@ -96,33 +96,35 @@ const Dashboard = () => {
     return () => clearInterval(intervalId);
   }, [currentWeek, quotes]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const fadeStart = 100;
-      const fadeEnd = 600;
+ useEffect(() => {
+ const handleScroll = () => {
+  const scrollY = window.scrollY;
+  const fadeStart = 100;
+  const fadeEnd = 250;
 
-      const progress = Math.min(
-        Math.max((scrollY - fadeStart) / (fadeEnd - fadeStart), 0),
-        1
-      );
+  const progress = Math.min(
+    Math.max((scrollY - fadeStart) / (fadeEnd - fadeStart), 0),
+    1
+  );
 
-      const newOpacity = 1 - progress;
-      const newBlur = progress * 5;
+  const newOpacity = 1 - progress;
+  document.documentElement.style.setProperty("--quote-opacity", newOpacity.toString());
 
-      document.documentElement.style.setProperty(
-        "--quote-opacity",
-        newOpacity.toString()
-      );
-      document.documentElement.style.setProperty(
-        "--quote-blur",
-        `${newBlur}px`
-      );
-    };
+  const introFadeStart = 0;
+  const introFadeEnd = 40;
+  const introProgress = Math.min(
+    Math.max((scrollY - introFadeStart) / (introFadeEnd - introFadeStart), 0),
+    1
+  );
+  const newIntroOpacity = introProgress;
+  document.documentElement.style.setProperty("--intro-opacity", newIntroOpacity.toString());
+};
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  window.addEventListener("scroll", handleScroll);
+  handleScroll(); // set initial value
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
 
   const getNextWeekTime = () => {
     const now = new Date();
@@ -194,8 +196,8 @@ const positionsDesktop = [
   return (
     <div className={`h-screen relative ${animate ? "fade-slide-in" : ""}`}>
       {/* Intro-Text */}
-      <div className="flex absolute z-10 top-1/2 w-full lg:justify-center">
-        <div className="-translate-y-1/2 body-text padding-21 lg:w-6/12">
+      <div className="flex absolute z-10 top-[18vh] lg:top-[22vh] w-full lg:justify-center intro-fade">
+        <div className="body-text padding-21 lg:w-6/12">
           Wir möchten dich dazu anregen, wieder bewusster im Moment zu leben. Mithilfe von wöchentlichen Sprüchen
           regenerieren wir deine Wahrnehmung und präsentieren dir den Alltag als eine Quelle voller Inspiration,
           aufregender Entdeckungen und überraschender Perspektiven.
@@ -247,7 +249,7 @@ const positionsDesktop = [
       
       </div>
       {visibleCount < galleries.length && (
-          <div className="w-full flex justify-end mt-8 padding-21">
+          <div className="w-full flex justify-end mt-0 lg:mt-8 padding-21">
             <button
               onClick={handleLoadMore}
               className="underline text-[#AFAFAF] cursor-pointer transition lg:text-xl"

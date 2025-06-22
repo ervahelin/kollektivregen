@@ -1,16 +1,20 @@
+'use client';
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Navigation = () => {
+  const pathname = usePathname();
+  const isOnDashboard = pathname === "/dashboard";
   return (
     <div className="navigation flex justify-between fixed bottom-4 w-full">
-      <Link href="/dashboard">
+      <Link href={isOnDashboard ? "#dashboard" : "/dashboard"}>
         <Image
           src="/logo.svg"
           width={60}
           height={40}
           alt="logo"
-          className="hover:scale-110 active:scale-110 transition lg:w-[105px] lg:h-[50px]"
+          className="hover:scale-105 active:scale-105 transition lg:w-[105px] lg:h-[50px]"
         />
       </Link>
       <Link href="/form">
