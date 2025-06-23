@@ -52,9 +52,6 @@ export default function Home() {
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="text-white text-center py-6 text-lg">
-          Wahrnehmung wird regeneriert...
-        </p>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const Dashboard = () => {
   const [formattedQuote, setFormattedQuote] = useState(null);
   const [animate, setAnimate] = useState(false);
   const [hoveredId, setHoveredId] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(12);
 
   useEffect(() => {
     setAnimate(true);
@@ -248,18 +248,22 @@ const positionsDesktop = [
         })}
       
       </div>
-      {visibleCount < galleries.length && (
-          <div className="w-full flex justify-end mt-0 lg:mt-8 padding-21">
-            <button
-              onClick={handleLoadMore}
-              className="underline text-[#AFAFAF] cursor-pointer transition lg:text-xl"
-            >
-              mehr laden
-            </button>
-          </div>
-        )}
+          {visibleCount < galleries.length && (
+            <div className="w-full flex justify-end mt-0 lg:mt-8 padding-21">
+              <button
+                onClick={handleLoadMore}
+                className="link"
+              >
+                mehr laden
+              </button>
+            </div>
+          )}
+         <div className="w-full flex justify-center pt-20 pb-[15vh] text-[#afafaf]">
+          <Link href="" className="mx-2 link">Impressum</Link> | 
+          <Link href="" className="mx-2 link">Datenschutz</Link>
+        </div>
       </div>
-
+     
       {/* Navigation */}
       <Navigation />
     </div>

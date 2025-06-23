@@ -3,13 +3,13 @@
 
 /* === Fonts === */
 .real-text-pro-semilight {
-  font-family: "ff-real-headline-pro-2", sans-serif;
+  font-family: ff-real-headline-pro-2, sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
 .real-text-pro-semilight-italic {
-  font-family: "ff-real-headline-pro-2", sans-serif;
+  font-family: ff-real-headline-pro-2, sans-serif;
   font-weight: 400;
   font-style: italic;
 }
@@ -89,6 +89,9 @@ body {
     @apply font-light text-[10px] leading-5 lg:text-xs;
   }
 }
+.link{
+  @apply underline text-[#AFAFAF] hover:text-[#1c1b1b] cursor-pointer transition -mt-[10vh] lg:mt-0 lg:text-xl
+}
 
 /* === Components === */
 .countdown {
@@ -103,7 +106,7 @@ body {
 }
 
 .cover-grid {
-  @apply absolute top-10/12 lg:top-9/12 w-full pb-[209px] min-h-[50vh] lg:min-h-[60vh] ;
+  @apply relative top-10/12 lg:top-9/12 w-full min-h-[30vh] lg:min-h-[40vh] ;
   z-index: 100;
   background: linear-gradient(to top, #f0f0f0 90%, transparent 100%);
 }
@@ -177,7 +180,7 @@ ul {
 li {
   @apply active:bg-[#1C1B1B] active:text-white flex items-center border-b last:border-b-0 cursor-pointer hover:font-semibold hover:border-[#1C1B1B] hover:border-3 ease-in-out transition-all duration-100 text-sm lg:text-base;
   min-height: 55px;
-  font-family: "ff-real-headline-pro", sans-serif;
+  font-family: ff-real-headline-pro, sans-serif;
   font-weight: 400;
   background-color: var(--background);
   padding: 0px 15px 0px 15px;
